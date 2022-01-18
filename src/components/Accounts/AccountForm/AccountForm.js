@@ -44,19 +44,19 @@ const AccountForm = () => {
 
    
 
-    // try {
-    //   forestTeaApi.post(`/insertDailyAccountRecord`,data)
-    //   .then(res => {
-    //     if(res.data){
-    //       toast('This Account record insterted successfully to database...')
-    //       setTimeout(() => {
-    //         window.location.reload()
-    //       },2000)
-    //     }
-    //   })
-    // } catch (error) {
+    try {
+      forestTeaApi.post(`/insertDailyAccountRecord`,data)
+      .then(res => {
+        if(res.data){
+          toast('This Account record insterted successfully to database...')
+          setTimeout(() => {
+            window.location.reload()
+          },2000)
+        }
+      })
+    } catch (error) {
       
-    // }
+    }
     console.log(data)
   };
 

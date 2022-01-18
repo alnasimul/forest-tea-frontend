@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaPlug, FaPlus } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import AccountForm from "../../components/Accounts/AccountForm/AccountForm";
 import AccountsTable from "../../components/Accounts/AccountsTable/AccountsTable";
 import Layout from "../../components/Layout/Layout";
@@ -56,7 +56,7 @@ const Accounts = () => {
             <AccountForm />
           </Modal>
           <AccountsTable records={records} />
-          <h2 className="text-sm font-bold text-right italic my-3 mr-28 ">
+          <h2 className="text-sm font-bold text-right italic my-3">
             <span className="bg-gray-200 rounded-lg p-2 ">
               <span>Total Sold: {calculateTotalBill(records)} ( </span>
               <span className="text-green-700">

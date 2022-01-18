@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import forestTeaApi from "../../../helpers/forestTeaApi";
 
 const Edit = ({ record, closeModal }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const {
     _id,
     customerName,
@@ -13,16 +19,31 @@ const Edit = ({ record, closeModal }) => {
     productName,
     address,
     quantity,
+    unitPrice,
+    discount,
     due,
-    totalBill,
-    paid
+    paid,
   } = record;
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const [updateQuantity, setUpdatedQuantity] = useState(quantity);
+  const [updateUnitPrice, setUpdatedUnitPrice] = useState(unitPrice);
+  const [updateDiscount, setUpdatedDiscount] = useState(discount);
+
+  //setDiscount(discount > 0 ? (quantity * unitPrice) - ((quantity * unitPrice) * (discount/100)) : quantity*unitPrice)
+
   const onSubmit = (data) => {
+    
+    const { due, paid } = data;
+
+    data.quantity = parseInt(updateQuantity);
+    data.unitPrice = parseInt(updateUnitPrice);
+    data.discount = parseInt(updateDiscount);
+    data.due = parseInt(due);
+    data.paid = parseInt(paid);
+    data.totalBill =
+    updateDiscount > 0
+    ? updateQuantity * updateUnitPrice - updateQuantity * updateUnitPrice * (updateDiscount / 100)
+    : updateQuantity * updateUnitPrice
+
     try {
       forestTeaApi
         .patch(`/updateDailyAccountRecord/${_id}`, data)
@@ -35,12 +56,11 @@ const Edit = ({ record, closeModal }) => {
         });
     } catch (error) {}
     console.log(data);
+    console.log(data);
   };
+
   return (
-    <form className="w-full " onSubmit={handleSubmit(onSubmit)}>
-      <h1 className="text-xl text-center font-bold italic">
-        Edit <span className="text-red-600">{customerName}'s</span> Record
-      </h1>
+    <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full px-3">
           <label
@@ -139,26 +159,64 @@ const Edit = ({ record, closeModal }) => {
         </div>
       </div>
       <div className="flex flex-wrap -mx-3 mb-6">
-        <div className="w-full md:w-2/4 px-3 mb-6 md:mb-0">
+        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             for="product-quantity"
           >
-            Product's Quantity <span>(Sold)</span>
+            Quantity
           </label>
           <input
             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="product-quantity"
             type="text"
-            placeholder="Sold"
-            defaultValue={quantity}
-            {...register("quantity", { required: true })}
+            placeholder=""
+            value={updateQuantity}
+            onChange={(e) => setUpdatedQuantity(e.target.value)}
           />
           {errors.quantity && (
             <span className="text-red-600">This field is required</span>
           )}
         </div>
-        <div className="w-full md:w-2/4 px-3 mb-6 md:mb-0">
+        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="unit-price"
+          >
+            Unit Price
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="unit-price"
+            type="text"
+            placeholder=""
+            value={updateUnitPrice}
+            onChange={(e) => setUpdatedUnitPrice(e.target.value)}
+          />
+          {errors.unitPrice && (
+            <span className="text-red-600">This field is required</span>
+          )}
+        </div>
+        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="discount"
+          >
+            Discount
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="discount"
+            type="text"
+            placeholder="%"
+            value={updateDiscount}
+            onChange={(e) => setUpdatedDiscount(e.target.value)}
+          />
+          {errors.discount && (
+            <span className="text-red-600">This field is required</span>
+          )}
+        </div>
+        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             for="total-bill"
@@ -170,12 +228,12 @@ const Edit = ({ record, closeModal }) => {
             id="total-bill"
             type="text"
             placeholder="Bill"
-            defaultValue={totalBill}
-            {...register("totalBill", { required: true })}
+            value={
+              updateDiscount > 0
+                ? updateQuantity * updateUnitPrice - updateQuantity * updateUnitPrice * (updateDiscount / 100)
+                : updateQuantity * updateUnitPrice
+            }
           />
-          {errors.totalBill && (
-            <span className="text-red-600">This field is required</span>
-          )}
         </div>
       </div>
 
@@ -199,6 +257,33 @@ const Edit = ({ record, closeModal }) => {
             <span className="text-red-600">This field is required</span>
           )}
         </div>
+        {/* <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="grid-state"
+          >
+            Months
+          </label>
+          <div className="relative">
+            <select
+              className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              id="grid-state"
+            >
+             {
+                 months.map( month => <option> {month} </option>)
+             }
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg
+                className="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
+          </div>
+        </div> */}
         <div className="w-full md:w-2/4 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
