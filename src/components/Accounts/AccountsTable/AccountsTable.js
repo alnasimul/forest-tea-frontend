@@ -66,12 +66,9 @@ const AccountsTable = ({records}) => {
           <th className="px-4">Phone</th>
           <th className="px-4">Email</th>
           <th className="px-4">Address</th>
-          <th className="px-4">Product's Name </th>
-          <th className="px-4">Quantity (Sold)</th>
-          <th className="px-4">Unit Price</th>
           <th className="px-4">Date</th>
-          <th className="px-4">Total Bill</th>
-          <th className="px-4">Total Bill (After discount)</th>
+          <th>Items (Sold)</th>
+          <th className="px-4">Grand Total</th>
           <th className="px-1">Paid - Due</th>
           <th>Status (Payment, Delivery)</th>
           <th className="px-4">Actions</th>

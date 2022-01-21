@@ -15,15 +15,12 @@ const TableData = ({
     customerName,
     phone,
     email,
-    productName,
     address,
-    quantity,
-    unitPrice,
     paymentStatus,
     deliveredStatus,
+    items,
     purchaseDate,
-    totalBill,
-    discount,
+    grandTotal,
     paid,
     due,
   } = record;
@@ -73,20 +70,42 @@ const TableData = ({
   return (
     <>
       <tr className="">
-      <td className="px-4 border-b border-r">{invoiceNo}</td>
+        <td className="px-4 border-b border-r">{invoiceNo}</td>
         <td className="px-4 border-b border-r">{customerName}</td>
         <td className="px-4 border-b border-r">{phone}</td>
         <td className="px-4 border-b border-r">{email}</td>
         <td className="px-4 border-b border-r">{address}</td>
-        <td className="px-4 border-b border-r">{productName}</td>
-        <td className="px-4 border-b border-r">{quantity}</td>
-        <td className="px-4 border-b border-r">{unitPrice}</td>
         <td className="px-1 border-b border-r">{purchaseDate}</td>
-        <td className="px-4 border-b border-r">{quantity * unitPrice}</td>
-        <td className="px-1 border-b border-r">{totalBill} - (After {discount} %)</td>
-        <td className="px-10 border-b border-r"> <span className="text-green-600 font-bold"> {paid} </span> <span className="text-red-600 font-bold">({due})</span> </td>
+        <td className="px-1 border-b border-r">
+          <table className="table table-striped text-xs font-bold">
+            <thead>
+              <tr>
+                <th className="px-2">Item</th>
+                <th className="px-2">Quantity</th>
+                <th className="px-2">Unit Price</th>
+                <th className="px-2">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr>
+                  <td className="px-2">{item.item}</td>
+                  <td className="px-2">{item.itemQuantity}</td>
+                  <td className="px-2">{item.itemUnitPrice}</td>
+                  <td className="px-2">{item.total} - (After {item.itemDiscount} %)</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </td>
+        <td className="px-4 border-b border-r">{grandTotal}</td>
+        <td className="px-10 border-b border-r">
+          {" "}
+          <span className="text-green-600 font-bold"> {paid} </span>{" "}
+          <span className="text-red-600 font-bold">({due})</span>{" "}
+        </td>
         <td className="px-2 border-b border-r ">
-          {paymentStatus ? <span> &#9989; </span> : <span> &#10060; </span>} |{" "}
+          {paymentStatus ? <span> &#9989; </span> : <span> &#10060; </span>} |
           {deliveredStatus ? <span> &#9989; </span> : <span> &#10060; </span>}
         </td>
         <td className="px-4 border-b">

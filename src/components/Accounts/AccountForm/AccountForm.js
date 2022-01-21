@@ -11,7 +11,6 @@ const AccountForm = () => {
     register,
     handleSubmit,
     control,
-    getValues,
     formState: { errors },
   } = useForm();
   const { fields, append, remove } = useFieldArray({

@@ -28,7 +28,7 @@ const Accounts = () => {
 
   const calculateTotalBill = (datas) => {
     let total = 0;
-    datas.map((data) => (total = total + parseInt(data.totalBill)));
+    datas.map((data) => (total = total + parseInt(data.grandTotal)));
     return total;
   };
 
