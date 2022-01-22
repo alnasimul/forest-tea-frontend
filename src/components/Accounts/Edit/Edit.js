@@ -5,6 +5,7 @@ import { FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import forestTeaApi from "../../../helpers/forestTeaApi";
+import EditCartItem from "./EditCartItem/EditCartItem";
 
 const Edit = ({ record }) => {
   const { _id, customerName, email, phone, address, items, grandTotal, paid } =
@@ -15,12 +16,12 @@ const Edit = ({ record }) => {
     control,
     formState: { errors },
   } = useForm();
-  let { fields, append, remove } = useFieldArray({
+  const { fields, append, prepend, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: "items", // unique name for your Field Array
     // keyName: "id", default to "id", you can change the key name
   });
-  let [previousItems, setPreviousItems] = useState([...items])
+ 
   const [item, setItem] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [unitPrice, setUnitPrice] = useState(0);
@@ -29,8 +30,10 @@ const Edit = ({ record }) => {
   const [updatePaid, setUpdatePaid] = useState(paid);
 
   //setDiscount(discount > 0 ? (quantity * unitPrice) - ((quantity * unitPrice) * (discount/100)) : quantity*unitPrice)
-
+  useEffect(() => prepend(items), [])
   useEffect(() => calculateGrandTotal(), [fields]);
+
+  
 
   const clearField = () => {
     setItem("");
@@ -52,46 +55,23 @@ const Edit = ({ record }) => {
     }
   };
 
-  const handleUpdateChange = (e, index, item) => {
-    e.preventDefault();
-
-    const modifyItem = {...item}
-
-    if(e.target.name === "updateItem+"+index){
-      modifyItem.item = e.target.value
-    }
-    else if(e.target.name === "updateQuantity+"+index){
-      modifyItem.itemQuantity = e.target.value
-    }
-    else if(e.target.name === "updateUnitPrice+"+index){
-      modifyItem.itemUnitPrice = e.target.value
-    }
-    else if(e.target.name === "updateDiscount+"+index){
-      modifyItem.itemDiscount = e.target.value
-    }
-    else if(e.target.name === "updateTotal+"+index){
-      modifyItem.total = e.target.value
-    }
-    console.log(modifyItem);
-    setPreviousItems([...items, modifyItem])
-  }
-
+  
   const calculateGrandTotal = () => {
     let total = 0;
-    items.map((field) => (total = total + field.total));
+    fields.map((field) => (total = total + field.total));
     console.log(total);
     setUpdateGrandTotal(total);
   };
 
   const onSubmit = (data) => {
-    data.due = grandTotal - paid;
-    data.paid = parseFloat(paid);
-    data.grandTotal = grandTotal;
+    data.due = updateGrandTotal - updatePaid;
+    data.paid = updatePaid;
+    data.grandTotal = parseInt(updateGrandTotal);
 
     try {
-      forestTeaApi.post(`/insertDailyAccountRecord`, data).then((res) => {
+      forestTeaApi.patch(`/updateDailyAccountRecord/${_id}`, data).then((res) => {
         if (res.data) {
-          toast("This Account record insterted successfully to database...");
+          toast("This sale record updated successfully to database...");
           setTimeout(() => {
             window.location.reload();
           }, 2000);
@@ -101,12 +81,12 @@ const Edit = ({ record }) => {
     console.log(data);
   };
 
-  console.log(previousItems)
+  console.log("fields",fields);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex bg-gray-100 p-3 rounded-lg">
-        <div className="w-1/3 ">
+        <div className="w-2/4 ">
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full px-3">
               <label
@@ -231,73 +211,7 @@ const Edit = ({ record }) => {
             Add item
           </a>
         </div>
-        <div className="w-1/3">
-          {previousItems.map((item, index) => (
-            <div key={index} className="mr-10 w-full flex flex-wrap">
-              <div className="w-1/5 mr-.5">
-                <label htmlFor="">Name</label>
-                <input
-                  type="text"
-                  value={item.item}
-                  name={`updateItem+${index}`}
-                  onChange={(e) => handleUpdateChange(e, index, item)}
-                  className="p-1 border border-gray-200 rounded mb-3"
-                />
-              </div>
-
-              <div className="w-1/5 mr-.5">
-                <label htmlFor="">Quantity</label>
-                <input
-                  type="text"
-                  value={item.itemQuantity}
-                  name={`updateQuantity+${index}`}
-                  onChange={(e) => handleUpdateChange(e, index)}
-                  className="p-1  border border-gray-200 rounded mb-3"
-                />
-              </div>
-              <div className="w-1/5 mr-.5">
-                <label htmlFor="">Unit Price</label>
-                <input
-                  type="text"
-                  value={item.itemUnitPrice}
-                  name={`updateUnitPrice+${index}`}
-                  onChange={(e) => handleUpdateChange(e, index)}
-                  className="p-1 border border-gray-200 rounded mb-3"
-                />
-              </div>
-              <div className="w-1/5 mr-.5">
-                <label htmlFor="">Discount %</label>
-                <input
-                  type="text"
-                  value={item.itemDiscount}
-                  name={`updateDiscount+${index}`}
-                  onChange={(e) => handleUpdateChange(e, index)}
-                  className="p-1 border border-gray-200 rounded mb-3"
-                />
-              </div>
-             <div className="w-1/5 mr-.5">
-             <label htmlFor="">Total</label>
-              <input
-                type="text"
-                value={
-                  item.itemDiscount > 0
-                    ? item.itemQuantity * item.itemUnitPrice -
-                      (item.itemQuantity *
-                        item.itemUnitPrice *
-                        item.itemDiscount) /
-                        100
-                    : item.itemQuantity * item.itemUnitPrice
-                }
-                name={`updateTotal+${index}`}
-                onChange={(e) => handleUpdateChange(e, index)}
-                className="p-1 border border-gray-200 rounded mb-3"
-              />
-             </div>
-              <hr />
-            </div>
-          ))}
-        </div>
-        <div className="w-1/3 bg-white p-3 border rounded-lg">
+        <div className="w-2/4 bg-white p-3 border rounded-lg">
           <table className="table text-gray-600">
             <thead>
               <tr>
@@ -316,8 +230,8 @@ const Edit = ({ record }) => {
                   <tr
                     key={field.id} // important to include key with field's id
                   >
-                    <td> {index + 1} </td>
-                    <td> {field.item} </td>
+                    <td>  {index + 1} </td>
+                    <td>  {field.item} </td>
                     <td> {field.itemQuantity} </td>
                     <td> {field.itemUnitPrice} </td>
                     <td> {field.itemDiscount} % </td>
@@ -445,7 +359,7 @@ const Edit = ({ record }) => {
             id="total-sale"
             type="text"
             placeholder="Paid"
-            value={paid}
+            value={updatePaid}
             onChange={(e) => setUpdatePaid(e.target.value)}
           />
         </div>

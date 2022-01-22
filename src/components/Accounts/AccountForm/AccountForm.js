@@ -74,6 +74,7 @@ const AccountForm = () => {
     ];
     data.due = grandTotal - paid;
     data.paid = parseFloat(paid);
+    data.items = fields;
     data.grandTotal = grandTotal;
     data.paymentStatus = false;
     data.deliveredStatus = false;
@@ -84,7 +85,7 @@ const AccountForm = () => {
     try {
       forestTeaApi.post(`/insertDailyAccountRecord`, data).then((res) => {
         if (res.data) {
-          toast("This Account record insterted successfully to database...");
+          toast("This sale record insterted successfully to database...");
           setTimeout(() => {
             window.location.reload();
           }, 2000);
