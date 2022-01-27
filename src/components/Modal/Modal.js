@@ -1,23 +1,22 @@
 import React from 'react';
 import ReactModal from 'react-modal';
 
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        right: 'auto',
-        width: '95%',
-        height: '95%',
-        padding: '20px',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-    },
-};
-
 ReactModal.setAppElement('#root')
 
-const Modal = ({children, modalIsOpen, closeModal}) => {
+const Modal = ({children, modalIsOpen, closeModal, compact}) => {
+    const customStyles = {
+        content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            width: compact ? '75%' : '95%',
+            height: compact ? '75%' : '95%',
+            padding: '20px',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+        },
+    };
     return (
         <div>
             <ReactModal

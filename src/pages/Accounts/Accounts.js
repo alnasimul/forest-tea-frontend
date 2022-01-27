@@ -45,7 +45,7 @@ const Accounts = () => {
   return (
     <Layout>
       <div className="grid md:grid-cols-1 lg:grid-cols-1 md:gap-10 sm:flex sm:justify-between">
-        <div className="w-full mt-5  sm:px-5 bg-white rounded-lg text-center lg:mt-20  md:mr-5">
+        <div className="w-full mt-5  sm:px-5 bg-white rounded-lg text-center lg:mt-20 md:mr-5">
           <button
                 className="bg-red-700 text-white p-2 rounded flex mb-3 uppercase"
                 onClick={openModal}

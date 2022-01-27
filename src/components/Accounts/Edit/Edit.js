@@ -5,7 +5,6 @@ import { FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import forestTeaApi from "../../../helpers/forestTeaApi";
-import EditCartItem from "./EditCartItem/EditCartItem";
 
 const Edit = ({ record }) => {
   const { _id, customerName, email, phone, address, items, grandTotal, paid } =

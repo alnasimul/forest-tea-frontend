@@ -74,7 +74,6 @@ const AccountForm = () => {
     ];
     data.due = grandTotal - paid;
     data.paid = parseFloat(paid);
-    data.items = fields;
     data.grandTotal = grandTotal;
     data.paymentStatus = false;
     data.deliveredStatus = false;
