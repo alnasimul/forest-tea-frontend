@@ -1,7 +1,20 @@
 import React from 'react';
+import { toast } from 'react-toastify';
+import forestTeaApi from '../../../helpers/forestTeaApi';
 import TableData from './TableData/TableData';
 
 const StocksTable = ({stocks}) => {
+    const deleteStock = id => {
+        forestTeaApi.delete(`/deleteStock/${id}`)
+        .then( res => {
+            if(res.data){
+                toast('This item successfully delete from database')
+                setTimeout(() => {
+                    window.location.reload()
+                },1000)
+            }
+        })
+    }
     return (
         <table className='table-auto border-b-0 border-t  border-x border-gray-300 text-sm text-gray-600 rounded'>
             <thead className='bg-gray-200'>
@@ -21,7 +34,7 @@ const StocksTable = ({stocks}) => {
             </thead>
             <tbody className='text-md font-bold'>
                 {
-                    stocks.map((stockItem, index) => <TableData key={stockItem.id} stockItem={stockItem} index={index}/>)
+                    stocks.map((stockItem, index) => <TableData key={stockItem.id} stockItem={stockItem} index={index} deleteStock={deleteStock}/>)
                 }
             </tbody>
         </table>
