@@ -5,6 +5,7 @@ import Edit from "../../Edit/Edit";
 
 const TableData = ({
   record,
+  stocks,
   updatePaymentStatus,
   updateDeliveryStatus,
   deleteData,
@@ -184,7 +185,7 @@ const TableData = ({
       </tr>
       {modalIsOpen && (
         <Modal modalIsOpen={modalIsOpen} closeModal={closeModal}>
-          <Edit record={record} closeModal={closeModal} />
+          <Edit record={record} stocks={stocks} closeModal={closeModal} />
         </Modal>
       )}
     </>

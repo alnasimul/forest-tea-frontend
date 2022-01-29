@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import forestTeaApi from "../../../helpers/forestTeaApi";
 import TableData from "./TableData/TableData";
 
-const AccountsTable = ({records}) => {
+const AccountsTable = ({records, stocks}) => {
   
   const updatePaymentStatus = (id, status) => {
     try {
@@ -76,7 +76,7 @@ const AccountsTable = ({records}) => {
       </thead>
       <tbody className="font-medium">
         {
-          records.map(record =>  <TableData key={record.id} record={record} updatePaymentStatus={updatePaymentStatus} updateDeliveryStatus={updateDeliveryStatus} deleteData={deleteData}/>  )
+          records.map(record =>  <TableData key={record.id} record={record} stocks={stocks} updatePaymentStatus={updatePaymentStatus} updateDeliveryStatus={updateDeliveryStatus} deleteData={deleteData}/>  )
         }
        
       </tbody>

@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import forestTeaApi from "../../../helpers/forestTeaApi";
 
-const AccountForm = () => {
+const AccountForm = ({ stocks }) => {
   const {
     register,
     handleSubmit,
@@ -18,7 +18,9 @@ const AccountForm = () => {
     name: "items", // unique name for your Field Array
     // keyName: "id", default to "id", you can change the key name
   });
+  const [productId, setProductId] = useState("");
   const [item, setItem] = useState("");
+  const [confirmedItems, setConfirmedItems] = useState([])
   const [quantity, setQuantity] = useState(0);
   const [unitPrice, setUnitPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
@@ -27,7 +29,7 @@ const AccountForm = () => {
 
   //setDiscount(discount > 0 ? (quantity * unitPrice) - ((quantity * unitPrice) * (discount/100)) : quantity*unitPrice)
 
-  useEffect(() => calculateGrandTotal(),[fields])
+  useEffect(() => calculateGrandTotal(), [fields]);
 
   const clearField = () => {
     setItem("");
@@ -51,12 +53,18 @@ const AccountForm = () => {
 
   const calculateGrandTotal = () => {
     let total = 0;
-    fields.map( field => total = total + field.total);
-    console.log(total)
-     setGrandTotal(total);
+    fields.map((field) => (total = total + field.total));
+    console.log(total);
+    setGrandTotal(total);
+  };
+
+
+  const getItemAndPrice = () => {
+   const filteredStock = stocks.find(stock => stock._id === productId);
+   setItem(filteredStock.productName.concat(` - ${filteredStock.productType}`));
+   setUnitPrice(filteredStock.sellingUnitPrice)
   }
 
-  
   const onSubmit = (data) => {
     const months = [
       "January",
@@ -82,19 +90,24 @@ const AccountForm = () => {
     data.year = new Date().getFullYear();
 
     try {
-      forestTeaApi.post(`/insertDailyAccountRecord`, data).then((res) => {
-        if (res.data) {
-          toast("This sale record insterted successfully to database...");
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        }
-      });
+      // forestTeaApi.post(`/insertDailyAccountRecord`, data).then((res) => {
+      //   if (res.data) {
+      //     toast("This sale record insterted successfully to database...");
+      //     setTimeout(() => {
+      //       window.location.reload();
+      //     }, 2000);
+      //   }
+      // });
+       forestTeaApi.patch(`/updateProductsStocksQuantity`,confirmedItems)
+       .then(res => console.log(res.data))
     } catch (error) {}
-    console.log(data);
+
+    setConfirmedItems(data.items)
+
+    console.log(data)
   };
 
-  console.log(fields);
+  console.log("confirmed", confirmedItems);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
@@ -109,7 +122,7 @@ const AccountForm = () => {
                 Add items
               </label>
 
-              <input
+              {/* <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
                 id="items"
@@ -117,7 +130,37 @@ const AccountForm = () => {
                 value={item}
                 onChange={(e) => handleChange(e)}
               />
-              {errors.requiredField && <span>This field is required</span>}
+              {errors.requiredField && <span>This field is required</span>} */}
+              <div className="relative">
+                <select
+                  className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  id="grid-state"
+                  onClick={(e) => {
+                    setProductId(e.target.value)
+                    getItemAndPrice()
+                  }}
+                >
+                  <option disabled={true} value={null}>
+                    Select Item
+                  </option>
+                  {stocks.map((stock) => (
+                    <option
+                      value={stock._id}
+                    >
+                      {stock.productName} - {stock.productType}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg
+                    className="fill-current h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
@@ -207,6 +250,7 @@ const AccountForm = () => {
           <a
             onClick={() => {
               append({
+                productId,
                 item,
                 itemQuantity: parseFloat(quantity),
                 itemUnitPrice: parseFloat(unitPrice),
@@ -227,38 +271,41 @@ const AccountForm = () => {
 
         <div className="w-2/4 bg-white p-3 border rounded-lg">
           <table className="table text-gray-600">
-              <thead>
-                <tr>
-                  <th>Serial</th>
-                  <th>Product Name</th>
-                  <th>Quantity</th>
-                  <th>Unit Price</th> 
-                  <th>Discount</th>
-                  <th>Total</th> 
-                  <th>Delete</th>
-                </tr>
-              </thead>
-           <tbody>
-           {fields.map((field, index) => {
-              return (
-                <tr
-                  key={field.id} // important to include key with field's id
-                >
-                  <td> {index + 1} </td>
-                  <td> {field.item} </td>
-                  <td> {field.itemQuantity} </td>
-                  <td> {field.itemUnitPrice} </td> 
-                  <td> {field.itemDiscount} % </td>
-                  <td> {field.total} </td>
-                  <td className="text-red-700 hover:text-red-800"> <FaTrash
-                    onClick={() => remove(index)}
-                    className="mt-1 ml-2 cursor-pointer"
-                  /></td>
-                </tr>
-              );
-            })}
-           </tbody>
-            </table>
+            <thead>
+              <tr>
+                <th>Serial</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Discount</th>
+                <th>Total</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fields.map((field, index) => {
+                return (
+                  <tr
+                    key={field.id} // important to include key with field's id
+                  >
+                    <td> {index + 1} </td>
+                    <td> {field.item} </td>
+                    <td> {field.itemQuantity} </td>
+                    <td> {field.itemUnitPrice} </td>
+                    <td> {field.itemDiscount} % </td>
+                    <td> {field.total} </td>
+                    <td className="text-red-700 hover:text-red-800">
+                      {" "}
+                      <FaTrash
+                        onClick={() => remove(index)}
+                        className="mt-1 ml-2 cursor-pointer"
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -348,7 +395,7 @@ const AccountForm = () => {
             type="text"
             placeholder="Grand Total"
             value={grandTotal}
-            onChange={e => setGrandTotal(e.target.value)}
+            onChange={(e) => setGrandTotal(e.target.value)}
           />
           {errors.paid && (
             <span className="text-red-600">This field is required</span>
@@ -367,7 +414,7 @@ const AccountForm = () => {
             type="text"
             placeholder="Paid"
             value={paid}
-            onChange={ e => setPaid(e.target.value)}
+            onChange={(e) => setPaid(e.target.value)}
           />
         </div>
         {/* <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">

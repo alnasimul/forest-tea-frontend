@@ -8,6 +8,7 @@ import forestTeaApi from "../../helpers/forestTeaApi";
 
 const Accounts = () => {
   const [records, setRecords] = useState([]);
+  const [stocks, setStocks] = useState([]);
   const [modalIsOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
@@ -24,6 +25,8 @@ const Accounts = () => {
       .then((res) => {
         setRecords(res.data);
       });
+    forestTeaApi.get(`/stocks`)
+    .then(res => setStocks(res.data))  
   }, []);
 
   const calculateTotalBill = (datas) => {
@@ -53,9 +56,9 @@ const Accounts = () => {
                 <FaPlus className="mt-1 mr-2" /> Add Sale Record
           </button>
           <Modal modalIsOpen={modalIsOpen} closeModal={closeModal}>
-            <AccountForm />
+            <AccountForm stocks={stocks} />
           </Modal>
-          <AccountsTable records={records} />
+          <AccountsTable records={records} stocks={stocks} />
           <h2 className="text-sm font-bold text-right italic my-3">
             <span className="bg-gray-200 rounded-lg p-2 ">
               <span>Total Sold: {calculateTotalBill(records)} ( </span>
