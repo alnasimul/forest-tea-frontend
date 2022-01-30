@@ -28,6 +28,7 @@ const StockForm = ({closeModal}) => {
         "November",
         "December",
       ];
+    data.productNameWithCategory = data.productName + " - " + data.productType  
     data.sellingUnitPrice = parseFloat(data.sellingUnitPrice)
     data.stock = parseFloat(stock);
     data.buyingUnitPrice = parseFloat(unitPrice);
@@ -38,7 +39,7 @@ const StockForm = ({closeModal}) => {
     data.month = months[new Date().getMonth()];
     data.year = new Date().getFullYear();
 
-    if(stock && unitPrice && paid){
+    if(stock && unitPrice){
         try {
             forestTeaApi.post('/addStock', data)
             .then( res => {

@@ -5,8 +5,9 @@ import { FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import forestTeaApi from "../../../helpers/forestTeaApi";
+import SearchedItems from "./SearchedItems/SearchedItems";
 
-const AccountForm = ({ stocks }) => {
+const AccountForm = () => {
   const {
     register,
     handleSubmit,
@@ -18,9 +19,10 @@ const AccountForm = ({ stocks }) => {
     name: "items", // unique name for your Field Array
     // keyName: "id", default to "id", you can change the key name
   });
-  const [productId, setProductId] = useState("");
+
+  const [searchedItems, setSearchedItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState({})
   const [item, setItem] = useState("");
-  const [confirmedItems, setConfirmedItems] = useState([])
   const [quantity, setQuantity] = useState(0);
   const [unitPrice, setUnitPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
@@ -30,8 +32,10 @@ const AccountForm = ({ stocks }) => {
   //setDiscount(discount > 0 ? (quantity * unitPrice) - ((quantity * unitPrice) * (discount/100)) : quantity*unitPrice)
 
   useEffect(() => calculateGrandTotal(), [fields]);
+  useEffect(() => getProducts(), [item])
 
   const clearField = () => {
+    setSearchedItems([])
     setItem("");
     setQuantity(0);
     setUnitPrice(0);
@@ -58,12 +62,20 @@ const AccountForm = ({ stocks }) => {
     setGrandTotal(total);
   };
 
-
-  const getItemAndPrice = () => {
-   const filteredStock = stocks.find(stock => stock._id === productId);
-   setItem(filteredStock.productName.concat(` - ${filteredStock.productType}`));
-   setUnitPrice(filteredStock.sellingUnitPrice)
+  const getProducts = () => {
+    if(item){
+      forestTeaApi.get(`/getProductByName/${item}`)
+      .then(res => setSearchedItems(res.data))
+    }
   }
+
+  const selectProduct = (item) => {
+    setSelectedItem(item)
+    setUnitPrice(item.sellingUnitPrice)
+    setSearchedItems([])
+  }
+
+
 
   const onSubmit = (data) => {
     const months = [
@@ -90,24 +102,20 @@ const AccountForm = ({ stocks }) => {
     data.year = new Date().getFullYear();
 
     try {
-      // forestTeaApi.post(`/insertDailyAccountRecord`, data).then((res) => {
-      //   if (res.data) {
-      //     toast("This sale record insterted successfully to database...");
-      //     setTimeout(() => {
-      //       window.location.reload();
-      //     }, 2000);
-      //   }
-      // });
-       forestTeaApi.patch(`/updateProductsStocksQuantity`,confirmedItems)
+      forestTeaApi.post(`/insertDailyAccountRecord`, data).then((res) => {
+        if (res.data) {
+          toast("This sale record insterted successfully to database...");
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        }
+      });
+       forestTeaApi.patch(`/updateProductsStocksQuantity`,data.items)
        .then(res => console.log(res.data))
     } catch (error) {}
 
-    setConfirmedItems(data.items)
-
-    console.log(data)
   };
 
-  console.log("confirmed", confirmedItems);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
@@ -122,7 +130,7 @@ const AccountForm = ({ stocks }) => {
                 Add items
               </label>
 
-              {/* <input
+              <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
                 id="items"
@@ -130,22 +138,30 @@ const AccountForm = ({ stocks }) => {
                 value={item}
                 onChange={(e) => handleChange(e)}
               />
-              {errors.requiredField && <span>This field is required</span>} */}
-              <div className="relative">
+              {errors.requiredField && <span>This field is required</span>}
+             
+              { searchedItems.length > 0 &&
+                <div className="bg-white p-3 mx-1 rounded border ">
+                  {searchedItems.map( item => <SearchedItems key={item._id} item={item} selectProduct={selectProduct} />)}
+                </div>
+              }
+              
+              {/* <div className="relative">
                 <select
                   className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   id="grid-state"
+                  defaultValue=""
                   onClick={(e) => {
                     setProductId(e.target.value)
                     getItemAndPrice()
                   }}
                 >
-                  <option disabled={true} value={null}>
+                  <option disabled={true} value={``}>
                     Select Item
                   </option>
                   {stocks.map((stock) => (
                     <option
-                      value={stock._id}
+                      value={stock._id} 
                     >
                       {stock.productName} - {stock.productType}
                     </option>
@@ -160,7 +176,7 @@ const AccountForm = ({ stocks }) => {
                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                   </svg>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
@@ -250,8 +266,8 @@ const AccountForm = ({ stocks }) => {
           <a
             onClick={() => {
               append({
-                productId,
-                item,
+                item: selectedItem.productName,
+                productId: selectedItem._id,
                 itemQuantity: parseFloat(quantity),
                 itemUnitPrice: parseFloat(unitPrice),
                 itemDiscount: parseFloat(discount),

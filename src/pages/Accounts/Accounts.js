@@ -25,8 +25,6 @@ const Accounts = () => {
       .then((res) => {
         setRecords(res.data);
       });
-    forestTeaApi.get(`/stocks`)
-    .then(res => setStocks(res.data))  
   }, []);
 
   const calculateTotalBill = (datas) => {
@@ -56,7 +54,7 @@ const Accounts = () => {
                 <FaPlus className="mt-1 mr-2" /> Add Sale Record
           </button>
           <Modal modalIsOpen={modalIsOpen} closeModal={closeModal}>
-            <AccountForm stocks={stocks} />
+            <AccountForm />
           </Modal>
           <AccountsTable records={records} stocks={stocks} />
           <h2 className="text-sm font-bold text-right italic my-3">
