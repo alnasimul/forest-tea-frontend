@@ -4,9 +4,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import forestTeaApi from "../../../helpers/forestTeaApi";
 import TableData from "./TableData/TableData";
 
-const AccountsTable = ({records, stocks}) => {
-  
-  const updatePaymentStatus = (id, status) => {
+const AccountsTable = ({records}) => {
+   const updatePaymentStatus = (id, status) => {
     try {
       forestTeaApi.patch(`/updatePaymentStatus/${id}`,{status})
       .then( res => {
@@ -56,9 +55,8 @@ const AccountsTable = ({records, stocks}) => {
   }
 
   return (
-    <table className="table-auto border-b-0 border-t  border-x border-gray-300 text-sm text-gray-600 rounded">
-      
-      <thead className="bg-gray-200">
+    <table className="table-auto border-b-0 border-t border-x border-gray-300 text-sm text-gray-600 rounded">
+    <thead className="bg-gray-200">
       <ToastContainer/>
         <tr>
           <th className="px-4">Invoice No</th>
@@ -76,9 +74,8 @@ const AccountsTable = ({records, stocks}) => {
       </thead>
       <tbody className="font-medium">
         {
-          records.map(record =>  <TableData key={record.id} record={record} stocks={stocks} updatePaymentStatus={updatePaymentStatus} updateDeliveryStatus={updateDeliveryStatus} deleteData={deleteData}/>  )
+          records.map(record =>  <TableData key={record.id} record={record} updatePaymentStatus={updatePaymentStatus} updateDeliveryStatus={updateDeliveryStatus} deleteData={deleteData}/>  )
         }
-       
       </tbody>
     </table>
   );

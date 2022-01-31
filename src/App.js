@@ -6,6 +6,7 @@ import Accounts from "./pages/Accounts/Accounts";
 import LoginPage from "./pages/Auth/LoginPage";
 import RegisterPage from "./pages/Auth/RegisterPage";
 import Home from "./pages/Home/Home";
+import Returns from "./pages/Returns/Returns";
 import Stocks from "./pages/Stocks/Stocks";
 
 function App() {
@@ -21,6 +22,9 @@ function App() {
           </Routes>
           <Routes>
             <Route path="/accounts" element={<Accounts />} />
+          </Routes>
+          <Routes>
+            <Route path="/returns" element={<Returns />} />
           </Routes>
           <Routes>
             <Route path="/stocks" element={<Stocks />} />

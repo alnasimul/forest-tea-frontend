@@ -5,9 +5,10 @@ import { FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import forestTeaApi from "../../../helpers/forestTeaApi";
+import SearchedItems from "../AccountForm/SearchedItems/SearchedItems";
 
-const Edit = ({ record, stocks }) => {
-  const { _id, customerName, email, phone, address, items, grandTotal, paid } =
+const Return = ({ record, stocks }) => {
+  const { _id, customerName, email, phone, address, items, invoiceNo, grandTotal, paid } =
     record;
   const {
     register,
@@ -20,7 +21,8 @@ const Edit = ({ record, stocks }) => {
     name: "items", // unique name for your Field Array
     // keyName: "id", default to "id", you can change the key name
   });
-  const [productId, setProductId] = useState("")
+  const [searchedItems, setSearchedItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState({})
   const [item, setItem] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [unitPrice, setUnitPrice] = useState(0);
@@ -29,8 +31,9 @@ const Edit = ({ record, stocks }) => {
   const [updatePaid, setUpdatePaid] = useState(paid);
 
   //setDiscount(discount > 0 ? (quantity * unitPrice) - ((quantity * unitPrice) * (discount/100)) : quantity*unitPrice)
-  useEffect(() => prepend(items), [])
+  
   useEffect(() => calculateGrandTotal(), [fields]);
+  useEffect(() => getProducts(), [item])
 
   
 
@@ -62,26 +65,53 @@ const Edit = ({ record, stocks }) => {
     setUpdateGrandTotal(total);
   };
 
-  const getItemAndPrice = () => {
-    const filteredStock = stocks.find(stock => stock._id === productId);
-    setItem(filteredStock.productName.concat(` - ${filteredStock.productType}`));
-    setUnitPrice(filteredStock.sellingUnitPrice)
-   }
+  const getProducts = () => {
+    if(item){
+      forestTeaApi.get(`/getProductByName/${item}`)
+      .then(res => setSearchedItems(res.data))
+    }
+  }
+
+  const selectProduct = (item) => {
+    setSelectedItem(item)
+    setUnitPrice(item.sellingUnitPrice)
+    setSearchedItems([])
+  }
 
   const onSubmit = (data) => {
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    data.invoiceNo = parseInt(invoiceNo)
     data.due = updateGrandTotal - updatePaid;
     data.paid = updatePaid;
     data.grandTotal = parseInt(updateGrandTotal);
+    data.returnDate = new Date().toDateString();
+    data.month = months[new Date().getMonth()];
+    data.year = new Date().getFullYear();
 
     try {
-      forestTeaApi.patch(`/updateDailyAccountRecord/${_id}`, data).then((res) => {
+      forestTeaApi.post(`/returnItems`, data).then((res) => {
         if (res.data) {
-          toast("This sale record updated successfully to database...");
+          toast("Items returned successfully");
           setTimeout(() => {
             window.location.reload();
           }, 2000);
         }
       });
+      forestTeaApi.patch(`/returnProductsStocksQuantity`,data.items)
+       .then(res => console.log(res.data))
     } catch (error) {}
     console.log(data);
   };
@@ -101,36 +131,22 @@ const Edit = ({ record, stocks }) => {
                 Add items
               </label>
 
-              <div className="relative">
-                <select
-                  className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  id="grid-state"
-                  onClick={(e) => {
-                    setProductId(e.target.value)
-                    getItemAndPrice()
-                  }}
-                >
-                  <option disabled={true} value={null}>
-                    Select Item
-                  </option>
-                  {stocks.map((stock) => (
-                    <option
-                      value={stock._id}
-                    >
-                      {stock.productName} - {stock.productType}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg
-                    className="fill-current h-4 w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                  </svg>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                type="text"
+                id="items"
+                name="itemInput"
+                value={item}
+                onChange={(e) => handleChange(e)}
+              />
+              {errors.requiredField && <span>This field is required</span>}
+             
+              { searchedItems.length > 0 &&
+                <div className="bg-white p-3 mx-1 rounded border ">
+                  {searchedItems.map( item => <SearchedItems key={item._id} item={item} selectProduct={selectProduct} />)}
                 </div>
-              </div>
+              }
+
             </div>
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
@@ -220,7 +236,8 @@ const Edit = ({ record, stocks }) => {
           <a
             onClick={() => {
               append({
-                item,
+                item: selectedItem.productName,
+                productId: selectedItem._id,
                 itemQuantity: parseFloat(quantity),
                 itemUnitPrice: parseFloat(unitPrice),
                 itemDiscount: parseFloat(discount),
@@ -441,4 +458,4 @@ const Edit = ({ record, stocks }) => {
   );
 };
 
-export default Edit;
+export default Return;

@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Modal from "../../../Modal/Modal";
-import Edit from "../../Edit/Edit";
+import Return from "../../Return/Return";
 
 const TableData = ({
   record,
-  stocks,
   updatePaymentStatus,
   updateDeliveryStatus,
   deleteData,
@@ -145,7 +144,7 @@ const TableData = ({
                   className="dropdown-item pe-auto"
                   onClick={openModal}
                 >
-                  <span className="text-sm font-bold py-3"> Edit </span>
+                  <span className="text-sm font-bold py-3"> Return </span>
                 </Link>
               </li>
               <li>
@@ -185,7 +184,7 @@ const TableData = ({
       </tr>
       {modalIsOpen && (
         <Modal modalIsOpen={modalIsOpen} closeModal={closeModal}>
-          <Edit record={record} stocks={stocks} closeModal={closeModal} />
+          <Return record={record} closeModal={closeModal} />
         </Modal>
       )}
     </>

@@ -34,6 +34,11 @@ const Header = () => {
               Accounts
             </a>
           </Link>
+          <Link to="/returns">
+            <a className="mx-3 md:mx-5 cursor-pointer font-bold text-green-700 hover:text-green-900 uppercase">
+              Returns
+            </a>
+          </Link>
           <Link to="/stocks">
             <a className="mx-3 md:mx-5 cursor-pointer font-bold text-green-700 hover:text-green-900 uppercase">
               Stocks
