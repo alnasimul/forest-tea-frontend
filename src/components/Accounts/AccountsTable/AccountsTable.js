@@ -55,7 +55,7 @@ const AccountsTable = ({records}) => {
   }
 
   return (
-    <table className="table-auto border-b-0 border-t border-x border-gray-300 text-sm text-gray-600 rounded">
+    <table className="w-full table-auto border-b-0 border-t border-x border-gray-300 text-sm text-gray-600 rounded">
     <thead className="bg-gray-200">
       <ToastContainer/>
         <tr>

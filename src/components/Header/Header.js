@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { FaSignInAlt } from "react-icons/fa";
+import { FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
 import brandlogo from "../../assets/brandLogoEdited01.png";
 import "./Header.css";
+import { AuthContext } from "../../context/AuthContext";
 
 const Header = () => {
+  const {user, signOut} = useContext(AuthContext)
   return (
     <div className="bg-slate-100 text-gray-100 shadow-md w-full ">
       <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
@@ -44,12 +46,13 @@ const Header = () => {
               Stocks
             </a>
           </Link>
-          <Link to="/login">
+          {
+            user.email ? <button className="mx-3 md:mx-5 flex items-center bg-white p-2 rounded cursor-pointer text-black hover:text-red-700" onClick={signOut}> <FaSignOutAlt/> <span className="mx-3">Logout</span>  </button> : <Link to="/login">
             <a className="mx-3 md:mx-5 flex items-center bg-white p-2 rounded cursor-pointer text-black hover:text-red-700">
-              {" "}
-              <FaSignInAlt /> <span className="mx-3">Login</span>{" "}
+              <FaSignInAlt /> <span className="mx-3">Login</span>
             </a>
           </Link>
+          }
         </nav>
       </div>
     </div>
