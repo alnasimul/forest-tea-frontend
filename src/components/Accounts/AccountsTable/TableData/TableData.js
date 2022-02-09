@@ -1,7 +1,9 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import Modal from "../../../Modal/Modal";
+import UpdateModal from "../../../UpdateModal/UpdateModal";
 import Return from "../../Return/Return";
+import Update from "../../Update/Update";
 
 const TableData = ({
   record,
@@ -26,6 +28,7 @@ const TableData = ({
   } = record;
 
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [updateModalIsOpen, setUpdateModalIsOpen] = useState(false);
 
   const openModal = () => {
     setIsOpen(true);
@@ -33,6 +36,14 @@ const TableData = ({
 
   const closeModal = () => {
     setIsOpen(false);
+  };
+
+  const openUpdateModal = () => {
+    setUpdateModalIsOpen(true);
+  };
+
+  const closeUpdateModal = () => {
+    setUpdateModalIsOpen(false);
   };
 
   const alertForUpdatePaymentStatus = (id, status) => {
@@ -121,62 +132,64 @@ const TableData = ({
             </button>
             <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
               <li>
-                <Link
-                  to=""
-                  className="dropdown-item pe-auto"
+                <a
+                  className="dropdown-item pe-auto cursor-pointer"
                   onClick={() => alertForUpdatePaymentStatus(_id, true)}
                 >
                   <span className="text-sm font-bold py-3"> Paid </span>
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to=""
-                  className="dropdown-item pe-auto"
+                <a
+                  className="dropdown-item pe-auto cursor-pointer"
                   onClick={() => alertForUpdateDeliveryStatus(_id, true)}
                 >
                   <span className="text-sm font-bold py-3"> Delivered </span>
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to=""
-                  className="dropdown-item pe-auto"
+                <a
+                  className="dropdown-item pe-auto cursor-pointer"
+                  onClick={openUpdateModal}
+                >
+                  <span className="text-sm font-bold py-3"> Update </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  className="dropdown-item pe-auto cursor-pointer"
                   onClick={openModal}
                 >
                   <span className="text-sm font-bold py-3"> Return </span>
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to=""
-                  className="dropdown-item pe-auto"
+                <a
+                  className="dropdown-item pe-auto cursor-pointer"
                   onClick={() => alertForDelete(_id)}
                 >
                   <span className="text-sm font-bold py-3">Delete</span>
-                </Link>
+                </a>
               </li>
               <hr />
               <li>
-                <Link
-                  to=""
-                  className="dropdown-item pe-auto"
+                <a
+                  className="dropdown-item pe-auto cursor-pointer"
                   onClick={() => alertForUpdatePaymentStatus(_id, false)}
                 >
                   <span className="text-sm font-bold py-3">Undo Paid</span>
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to=""
-                  className="dropdown-item pe-auto"
+                <a
+                  className="dropdown-item pe-auto cursor-pointer"
                   onClick={() => alertForUpdateDeliveryStatus(_id, false)}
                 >
                   <span className="text-sm font-bold py-3">
                     {" "}
                     Undo Delivered
                   </span>
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -187,6 +200,12 @@ const TableData = ({
           <Return record={record} closeModal={closeModal} />
         </Modal>
       )}
+      {updateModalIsOpen && (
+        <UpdateModal updateModalIsOpen={updateModalIsOpen} closeUpdateModal={closeUpdateModal} compact={true}>
+          <Update record={record} closeUpdateModal={closeUpdateModal}/>
+        </UpdateModal>
+      )
+      }
     </>
   );
 };

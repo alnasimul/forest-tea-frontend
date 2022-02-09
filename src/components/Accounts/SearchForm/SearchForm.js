@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react/cjs/react.development";
 import forestTeaApi from "../../../helpers/forestTeaApi";
 
-const SearchForm = ({ closeSearchForm, getSearchRecords }) => {
+const SearchForm = ({ closeSearchForm, getSearchRecords, openSalesTable }) => {
   const {
     register,
     handleSubmit,
@@ -37,6 +37,7 @@ const SearchForm = ({ closeSearchForm, getSearchRecords }) => {
             if(res.data){
                 getSearchRecords(res.data);
                 closeSearchForm();
+                openSalesTable();
             }
         })
     } catch (error) {
@@ -50,7 +51,10 @@ const SearchForm = ({ closeSearchForm, getSearchRecords }) => {
       <div className="relative mb-10">
         <button
           className="bg-red-700 hover:bg-red-800 p-2 rounded text-white absolute top-0 right-0"
-          onClick={closeSearchForm}
+          onClick={() => {
+            closeSearchForm()
+            openSalesTable()
+          }}
         >
           Close x
         </button>

@@ -12,6 +12,7 @@ const Accounts = () => {
   const [stocks, setStocks] = useState([]);
   const [modalIsOpen, setIsOpen] = useState(false);
   const [searchForm, setSearchForm] = useState(false)
+  const [salesTable, setSalesTable] = useState(true);
   
 
   const openModal = () => {
@@ -24,6 +25,10 @@ const Accounts = () => {
 
   const closeSearchForm = () => {
     setSearchForm(false)
+  }
+
+  const openSalesTable = () => {
+    setSalesTable(true)
   }
 
   useEffect(() => {
@@ -65,7 +70,10 @@ const Accounts = () => {
               >
                 <FaPlus className="mt-1 mr-2" /> Add Sale Record
           </button>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded flex mb-3 uppercase" onClick={() => setSearchForm(true)} >
+          <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded flex mb-3 uppercase" onClick={() => {
+            setSearchForm(true);
+            setSalesTable(false);
+            }} >
               <FaSearch className="mt-1 mr-2"/> Search 
           </button>
           </div>
@@ -73,10 +81,10 @@ const Accounts = () => {
             <AccountForm />
           </Modal>
           {
-            searchForm && <SearchForm closeSearchForm={closeSearchForm} getSearchRecords={getSearchRecords}/>
+            searchForm && <SearchForm closeSearchForm={closeSearchForm} openSalesTable={openSalesTable} getSearchRecords={getSearchRecords}/>
           }
           {
-            records.length > 0 ? <AccountsTable records={records} stocks={stocks} /> : <h2 className="text-2xl text-center mt-10 text-red-600 italic ">No records found</h2>
+           salesTable && <AccountsTable records={records} stocks={stocks} /> 
           }
           
           <h2 className="text-sm font-bold text-right italic my-3">
