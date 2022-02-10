@@ -11,9 +11,8 @@ const Accounts = () => {
   const [records, setRecords] = useState([]);
   const [stocks, setStocks] = useState([]);
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [searchForm, setSearchForm] = useState(false)
+  const [searchForm, setSearchForm] = useState(false);
   const [salesTable, setSalesTable] = useState(true);
-  
 
   const openModal = () => {
     setIsOpen(true);
@@ -24,12 +23,12 @@ const Accounts = () => {
   };
 
   const closeSearchForm = () => {
-    setSearchForm(false)
-  }
+    setSearchForm(false);
+  };
 
   const openSalesTable = () => {
-    setSalesTable(true)
-  }
+    setSalesTable(true);
+  };
 
   useEffect(() => {
     forestTeaApi
@@ -56,50 +55,56 @@ const Accounts = () => {
     return totalDue;
   };
 
-  const getSearchRecords = data => {
-    setRecords(data)
-  }
+  const getSearchRecords = (data) => {
+    setRecords(data);
+  };
   return (
     <Layout>
       <div className="grid md:grid-cols-1 lg:grid-cols-1 md:gap-10 sm:flex sm:justify-between">
         <div className="w-full mt-5 sm:px-5 bg-white rounded-lg lg:mt-20 md:mr-5">
           <div className="flex">
-          <button
-                className="bg-red-700 hover:bg-red-800 text-white p-2 rounded flex mb-3 uppercase mr-2"
-                onClick={openModal}
-              >
-                <FaPlus className="mt-1 mr-2" /> Add Sale Record
-          </button>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded flex mb-3 uppercase" onClick={() => {
-            setSearchForm(true);
-            setSalesTable(false);
-            }} >
-              <FaSearch className="mt-1 mr-2"/> Search 
-          </button>
+            <button
+              className="bg-red-700 hover:bg-red-800 text-white p-2 rounded  mb-3 uppercase mr-2 hidden sm:flex"
+              onClick={openModal}
+            >
+              <FaPlus className="mt-1 mr-2" /> Add Sale Record
+            </button>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded flex mb-3 uppercase"
+              onClick={() => {
+                setSearchForm(true);
+                setSalesTable(false);
+              }}
+            >
+              <FaSearch className="mt-1 mr-2" /> Search
+            </button>
           </div>
           <Modal modalIsOpen={modalIsOpen} closeModal={closeModal}>
             <AccountForm />
           </Modal>
-          {
-            searchForm && <SearchForm closeSearchForm={closeSearchForm} openSalesTable={openSalesTable} getSearchRecords={getSearchRecords}/>
-          }
-          {
-           salesTable && <AccountsTable records={records} stocks={stocks} /> 
-          }
-          
-          <h2 className="text-sm font-bold text-right italic my-3">
-            <span className="bg-gray-200 rounded-lg p-2 ">
-              <span>Total Sold: {calculateTotalBill(records)} ( </span>
-              <span className="text-green-700">
-                {calculateTotalPaid(records)} Paid
+          {searchForm && (
+            <SearchForm
+              closeSearchForm={closeSearchForm}
+              openSalesTable={openSalesTable}
+              getSearchRecords={getSearchRecords}
+            />
+          )}
+          {salesTable && <AccountsTable records={records} stocks={stocks} />}
+          {salesTable && (
+            <h2 className="forMobile text-sm font-bold text-right italic my-3">
+              <span className="bg-gray-200 rounded-lg p-2 ">
+                <span>Total Sold: {calculateTotalBill(records)} ( </span>
+                <span className="text-green-700">
+                  {calculateTotalPaid(records)} Paid
+                </span>
+                <span className="text-gray-500"> || </span>
+                <span className="text-red-600">
+                  {calculateDue(records)} Due
+                </span>
+                )
               </span>
-              <span className="text-gray-500"> || </span>
-              <span className="text-red-600">
-                {calculateDue(records)} Due
-              </span>
-              )
-            </span>
-          </h2>
+            </h2>
+          )}
         </div>
       </div>
     </Layout>

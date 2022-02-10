@@ -3,6 +3,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import forestTeaApi from "../../../helpers/forestTeaApi";
 import TableData from "./TableData/TableData";
+import './AccountsTable.css';
 
 const AccountsTable = ({ records }) => {
   const updatePaymentStatus = (id, status) => {
@@ -56,7 +57,7 @@ const AccountsTable = ({ records }) => {
   return (
     <>
       {records.length > 0 ? (
-        <table className="w-full table-auto border-b-0 border-t border-x border-gray-300 text-sm text-gray-600 rounded">
+        <table className="table w-full table-auto border-b-0 border-t border-x border-gray-300 text-sm text-gray-600 rounded">
           <thead className="bg-gray-200">
             <ToastContainer />
             <tr>

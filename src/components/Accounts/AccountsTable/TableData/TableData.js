@@ -80,15 +80,15 @@ const TableData = ({
   };
   return (
     <>
-      <tr className="">
-        <td className="px-4 border-b border-r">{invoiceNo}</td>
-        <td className="px-4 border-b border-r">{customerName}</td>
-        <td className="px-4 border-b border-r">{phone}</td>
-        <td className="px-4 border-b border-r">{email}</td>
-        <td className="px-4 border-b border-r">{address}</td>
-        <td className="px-1 border-b border-r">{purchaseDate}</td>
-        <td className="px-1 border-b border-r">
-          <table className="table table-striped text-xs font-bold">
+      <tr className="mb">
+        <td className="px-4 border-b border-r" data-label="Invoice No" >{invoiceNo}</td>
+        <td className="px-4 border-b border-r" data-label="Customer's Name">{customerName}</td>
+        <td className="px-4 border-b border-r" data-label="Phone">{phone}</td>
+        <td className="px-4 border-b border-r" data-label="Email">{email}</td>
+        <td className="px-4 border-b border-r" data-label="Address">{address}</td>
+        <td className="px-1 border-b border-r" data-label="Date">{purchaseDate}</td>
+        <td className="px-1 border-b border-r" >
+          <table className="table text-xs font-bold mobileTable">
             <thead>
               <tr>
                 <th className="px-2">Item</th>
@@ -98,28 +98,30 @@ const TableData = ({
               </tr>
             </thead>
             <tbody>
-              {items.map((item) => (
+              {items.map((item, index) => (
                 <tr>
-                  <td className="px-2">{item.item}</td>
-                  <td className="px-2">{item.itemQuantity}</td>
-                  <td className="px-2">{item.itemUnitPrice}</td>
-                  <td className="px-2">{item.total} - (After {item.itemDiscount} %)</td>
+                  <p className="text-center">Serial #{index + 1}</p>
+                  <td className="px-2" data-label="Item">{item.item}</td>
+                  <td className="px-2" data-label="Quantity">{item.itemQuantity}</td>
+                  <td className="px-2" data-label="Unit Price">{item.itemUnitPrice}</td>
+                  <td className="px-2" data-label="Total">{item.total} - (After {item.itemDiscount} %)</td>
+                  <hr />
                 </tr>
               ))}
             </tbody>
           </table>
         </td>
-        <td className="px-4 border-b border-r">{grandTotal}</td>
-        <td className="px-10 border-b border-r">
+        <td className="px-4 border-b border-r" data-label="Grand Total">{grandTotal}</td>
+        <td className="px-10 border-b border-r" data-label="Paid - Due">
           {" "}
           <span className="text-green-600 font-bold"> {paid} </span>{" "}
           <span className="text-red-600 font-bold">({due})</span>{" "}
         </td>
-        <td className="px-2 border-b border-r ">
+        <td className="px-2 border-b border-r" data-label="Status (Payment, Delivery)">
           {paymentStatus ? <span> &#9989; </span> : <span> &#10060; </span>} |
           {deliveredStatus ? <span> &#9989; </span> : <span> &#10060; </span>}
         </td>
-        <td className="px-4 border-b">
+        <td className="px-4 border-b" data-label="Actions">
           <div className="dropdown">
             <button
               className="bg-red-600 hover:bg-red-700 text-white p-2 rounded  dropdown-toggle"
@@ -157,7 +159,7 @@ const TableData = ({
               </li>
               <li>
                 <a
-                  className="dropdown-item pe-auto cursor-pointer"
+                  className="dropdown-item pe-auto cursor-pointer hidden sm:inline-block"
                   onClick={openModal}
                 >
                   <span className="text-sm font-bold py-3"> Return </span>

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import forestTeaApi from '../../../helpers/forestTeaApi';
 import TableData from '../TableData/TableData';
+import './ReturnsTable.css';
 
 const ReturnsTable = () => {
     const [returns, setReturns] = useState([])
@@ -25,7 +26,7 @@ const ReturnsTable = () => {
     }
 
     return (
-        <table className='table-auto border-b-0 border-t border-x border-gray-300 text-sm text-gray-600 rounded'>
+        <table className='returnsTable table-auto border-b-0 border-t border-x border-gray-300 text-sm text-gray-600 rounded'>
             <thead className='bg-gray-200'>
                 <tr>
                     <th className='px-4'>Invoice No</th>

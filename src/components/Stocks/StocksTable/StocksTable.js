@@ -2,6 +2,7 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import forestTeaApi from '../../../helpers/forestTeaApi';
 import TableData from './TableData/TableData';
+import './StocksTable.css';
 
 const StocksTable = ({stocks}) => {
     const deleteStock = id => {
@@ -16,7 +17,7 @@ const StocksTable = ({stocks}) => {
         })
     }
     return (
-        <table className='table-auto border-b-0 border-t  border-x border-gray-300 text-sm text-gray-600 rounded'>
+        <table className='stocksTable table-auto border-b-0 border-t  border-x border-gray-300 text-sm text-gray-600 rounded'>
             <thead className='bg-gray-200'>
                 <tr>
                     <th className='px-6'>Serial</th>

@@ -21,17 +21,17 @@ const TableData = ({ data, deleteReturnData }) => {
   }
 
   return (
-    <tr>
-      <td className="px-2 border-b border-r"> {invoiceNo} </td>
-      <td className="px-2 border-b border-r"> {returnDate} </td>
-      <td className="px-2 border-b border-r"> {customerName} </td>
-      <td className="px-2 border-b border-r"> {email} </td>
-      <td className="px-2 border-b border-r"> {phone} </td>
-      <td className="px-2 border-b border-r"> {grandTotal} </td>
-      <td className="px-2 border-b border-r"> {paid} </td>
-      <td className="px-2 border-b border-r"> {due} </td>
+    <tr className="mb">
+      <td className="px-2 border-b border-r" data-label="Invoice No"> {invoiceNo} </td>
+      <td className="px-2 border-b border-r" data-label="Date"> {returnDate} </td>
+      <td className="px-2 border-b border-r" data-label="Name"> {customerName} </td>
+      <td className="px-2 border-b border-r" data-label="Email"> {email} </td>
+      <td className="px-2 border-b border-r" data-label="Phone"> {phone} </td>
+      <td className="px-2 border-b border-r" data-label="Grand Total"> {grandTotal} </td>
+      <td className="px-2 border-b border-r" data-label="Paid"> {paid} </td>
+      <td className="px-2 border-b border-r" data-label="Due"> {due} </td>
       <td className="px-2 border-b border-r">
-        <table className="table table-striped text-xs font-bold">
+        <table className="table text-xs font-bold mobileTable">
           <thead>
             <tr>
               <th>Item</th>
@@ -41,12 +41,13 @@ const TableData = ({ data, deleteReturnData }) => {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {items.map((item, index) => (
               <tr>
-                <td className="px-2">{item.item}</td>
-                <td className="px-2">{item.itemQuantity}</td>
-                <td className="px-2">{item.itemUnitPrice}</td>
-                <td className="px-2">
+                 <p className="text-center">Serial #{index + 1}</p>
+                <td className="px-2" data-label="Item">{item.item}</td>
+                <td className="px-2" data-label="Quantity">{item.itemQuantity}</td>
+                <td className="px-2" data-label="Unit Price">{item.itemUnitPrice}</td>
+                <td className="px-2" data-label="Total">
                 {item.total} - (After {item.itemDiscount} %)
                 </td>
               </tr>
@@ -54,7 +55,7 @@ const TableData = ({ data, deleteReturnData }) => {
           </tbody>
         </table>
       </td>
-      <td className="px-1 border-b border-r">
+      <td className="px-1 border-b border-r" data-label="Action">
           <button className="bg-red-700 text-white hover:bg-red-800 p-2 rounded" onClick={() => alertForDeleteData(_id)}>Delete</button>
       </td>
     </tr>

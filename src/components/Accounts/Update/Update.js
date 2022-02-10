@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useState } from "react/cjs/react.development";
+import { useState } from "react";
 import forestTeaApi from "../../../helpers/forestTeaApi";
 
 const Update = ({ record, closeUpdateModal}) => {

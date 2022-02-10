@@ -1,7 +1,7 @@
 import React from "react";
 import { FaPlus } from "react-icons/fa";
 import { ToastContainer } from "react-toastify";
-import { useEffect, useState } from "react/cjs/react.development";
+import { useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import Modal from "../../components/Modal/Modal";
 import StockForm from "../../components/Stocks/StockForm/StockForm";
