@@ -1,12 +1,18 @@
 import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import brandlogo from "../../assets/brandLogoEdited01.png";
 import { AuthContext } from "../../context/AuthContext";
 import { handleGoogleSignIn } from "../../helpers/loginManager";
 
 const LoginPage = () => {
   const {user, login} = useContext(AuthContext); 
+  const history = useHistory();
+  const location = useLocation();
+
+  let { from } = location.state || { from: { pathname: "/" } };
   const {
     register,
     handleSubmit,
@@ -15,16 +21,20 @@ const LoginPage = () => {
 
   const onSubmit = (data) => {
     if(data.email && data.password){
-        login(data.email, data.password)
+        login(data.email, data.password,history, from)
       }
     console.log(data);
   };
+
+  console.log(location)
   
   console.log(user)
   return (
     <div className="container w-full p-10 max-w-lg shadow-md rounded mt-20 ml-90">
-      <div className="mb-4">
-        <img src={brandlogo} width={180} height={100} alt="logo" className="" style={{marginLeft: '128px'}} />
+      <div className="mb-4 flex justify-center">
+        <Link to="/">
+        <img src={brandlogo} width={180} height={100} alt="logo"  />
+        </Link>
       </div>
       <form className="w-full " onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-wrap -mx-3 mb-6">
@@ -72,7 +82,13 @@ const LoginPage = () => {
           value="Login"
         ></input>
       </form>
-      <hr className="mt-3" />
+      <p className="mt-2">
+        <Link to="/forgotpassword">
+          <span className="hover:text-gray-500 cursor-pointer ">Forgot password? click here to reset password.</span>
+        </Link>
+      </p>        
+
+      {/* <hr className="mt-3" />
       <h4 className="text-center mb-3 mt-2 font-bold">Or</h4>
       <button
         className="bg-black w-full text-white rounded p-2 mb-2"
@@ -85,7 +101,7 @@ const LoginPage = () => {
         <Link to="/register">
           <span className="hover:text-gray-500 cursor-pointer">Register</span>
         </Link>
-      </p>
+      </p> */}
     </div>
   );
 };

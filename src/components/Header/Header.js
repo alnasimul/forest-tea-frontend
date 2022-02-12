@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
+import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 import brandlogo from "../../assets/brandLogoEdited01.png";
 import "./Header.css";
 import { AuthContext } from "../../context/AuthContext";
@@ -46,6 +46,14 @@ const Header = () => {
               Stocks
             </a>
           </Link>
+          <Link to="/register">
+            <a className="mx-3 md:mx-5 cursor-pointer font-bold text-green-700 hover:text-green-900 uppercase flex">
+             <FaUser className="mt-1 mr-2"/> Register New Staff
+            </a>
+          </Link>
+          {
+            user.email && <p className="mx-3 md:mx-5 cursor-pointer text-green-700 hover:text-green-900  flex"> (Welcome, {user.name}) </p>
+          }
           {
             user.email ? <button className="mx-3 md:mx-5 flex items-center bg-white p-2 rounded cursor-pointer text-black hover:text-red-700" onClick={signOut}> <FaSignOutAlt/> <span className="mx-3">Logout</span>  </button> : <Link to="/login">
             <a className="mx-3 md:mx-5 flex items-center bg-white p-2 rounded cursor-pointer text-black hover:text-red-700">

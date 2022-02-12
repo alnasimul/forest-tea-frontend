@@ -45,12 +45,12 @@ const AuthProvider = ({ children }) => {
       handleResponse(res, false);
     });
   };
-  const login = (email, password) => {
+  const login = (email, password, history, from) => {
     signInWithEmailAndPassword(email, password).then((res) => {
-      handleResponse(res, true);
+      handleResponse(res, true, history, from);
     });
   };
-  const handleResponse = (res, redirect) => {
+  const handleResponse = (res, redirect, history, from) => {
     if (res.success) {
       setUser(res);
     }
@@ -60,9 +60,9 @@ const AuthProvider = ({ children }) => {
 
     if (redirect) {
       storeAuthToken(res);
-      // setTimeout(() => {
-      //   history.replace(from);
-      // }, 2000);
+      setTimeout(() => {
+        history.replace(from);
+      }, 2000);
     }
   };
   const signOut = () => {
@@ -113,6 +113,7 @@ const AuthProvider = ({ children }) => {
         register,
         checkUserLoggedIn,
         signOut,
+        handleResponse
       }}
     >
       {children}
