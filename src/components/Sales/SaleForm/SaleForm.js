@@ -2,12 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import forestTeaApi from "../../../helpers/forestTeaApi";
 import SearchedItems from "./SearchedItems/SearchedItems";
+import "./SaleForm.css";
+import { toast } from "react-toastify";
 
-const AccountForm = () => {
+const SaleForm = () => {
   const {
     register,
     handleSubmit,
@@ -21,21 +22,26 @@ const AccountForm = () => {
   });
 
   const [searchedItems, setSearchedItems] = useState([]);
-  const [selectedItem, setSelectedItem] = useState({})
+  const [selectedItem, setSelectedItem] = useState({});
   const [item, setItem] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [unitPrice, setUnitPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
+  const [expense, setExpense] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
+  const [totalSaleProfit, setTotalSaleProfit] = useState(0);
   const [paid, setPaid] = useState(0);
 
   //setDiscount(discount > 0 ? (quantity * unitPrice) - ((quantity * unitPrice) * (discount/100)) : quantity*unitPrice)
 
-  useEffect(() => calculateGrandTotal(), [fields]);
-  useEffect(() => getProducts(), [item])
+  useEffect(() => {
+    calculateGrandTotal();
+    calculateTotalSaleProfit();
+  }, [fields]);
+  useEffect(() => getProducts(), [item]);
 
   const clearField = () => {
-    setSearchedItems([])
+    setSearchedItems([]);
     setItem("");
     setQuantity(0);
     setUnitPrice(0);
@@ -62,20 +68,26 @@ const AccountForm = () => {
     setGrandTotal(total);
   };
 
+  const calculateTotalSaleProfit = () => {
+    let total = 0;
+    fields.map((field) => (total = total + field.totalProfit));
+    console.log(total);
+    setTotalSaleProfit(total);
+  };
+
   const getProducts = () => {
-    if(item){
-      forestTeaApi.get(`/getProductByName/${item}`)
-      .then(res => setSearchedItems(res.data))
+    if (item) {
+      forestTeaApi
+        .get(`/getProductByName/${item}`)
+        .then((res) => setSearchedItems(res.data));
     }
-  }
+  };
 
   const selectProduct = (item) => {
-    setSelectedItem(item)
-    setUnitPrice(item.sellingUnitPrice)
-    setSearchedItems([])
-  }
-
-
+    setSelectedItem(item);
+    setUnitPrice(item.sellingUnitPrice);
+    setSearchedItems([]);
+  };
 
   const onSubmit = (data) => {
     const months = [
@@ -95,6 +107,7 @@ const AccountForm = () => {
     data.due = grandTotal - paid;
     data.paid = parseFloat(paid);
     data.grandTotal = grandTotal;
+    data.totalSaleProfit = parseFloat(totalSaleProfit);
     data.paymentStatus = false;
     data.deliveredStatus = false;
     data.purchaseDate = new Date().toDateString();
@@ -113,16 +126,14 @@ const AccountForm = () => {
        forestTeaApi.patch(`/updateProductsStocksQuantity`,data.items)
        .then(res => console.log(res.data))
     } catch (error) {}
-
   };
-
-
+ 
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex bg-gray-100 p-3 rounded-lg">
         <div className="w-2/4 ">
           <div className="flex flex-wrap -mx-3 mb-6">
-            <div className="w-full px-3">
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label
                 htmlFor="items"
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -139,13 +150,19 @@ const AccountForm = () => {
                 onChange={(e) => handleChange(e)}
               />
               {errors.requiredField && <span>This field is required</span>}
-             
-              { searchedItems.length > 0 &&
+
+              {searchedItems.length > 0 && (
                 <div className="bg-white p-3 mx-1 rounded border ">
-                  {searchedItems.map( item => <SearchedItems key={item._id} item={item} selectProduct={selectProduct} />)}
+                  {searchedItems.map((item) => (
+                    <SearchedItems
+                      key={item._id}
+                      item={item}
+                      selectProduct={selectProduct}
+                    />
+                  ))}
                 </div>
-              }
-              
+              )}
+
               {/* <div className="relative">
                 <select
                   className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -177,6 +194,39 @@ const AccountForm = () => {
                   </svg>
                 </div>
               </div> */}
+            </div>
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                for="product-quantity"
+              >
+                Packeging
+              </label>
+              <div className="relative">
+                <select
+                  className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  id="grid-state"
+                  defaultValue=""
+                  onClick={(e) => {
+                    setExpense(e.target.value);
+                  }}
+                >
+                  <option disabled={true} value={``}>
+                    Select
+                  </option>
+                  <option value={0}>Lose</option>
+                  <option value={7}>Packed</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg
+                    className="fill-current h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
@@ -265,18 +315,35 @@ const AccountForm = () => {
           </div>
           <a
             onClick={() => {
-              append({
-                item: selectedItem.productName,
-                productId: selectedItem._id,
-                itemQuantity: parseFloat(quantity),
-                itemUnitPrice: parseFloat(unitPrice),
-                itemDiscount: parseFloat(discount),
-                total:
-                  discount > 0
-                    ? quantity * unitPrice -
-                      quantity * unitPrice * (discount / 100)
-                    : quantity * unitPrice,
-              });
+              ( item && quantity > 0) &&
+                append({
+                  item: selectedItem.productName, 
+                  productId: selectedItem._id,
+                  itemQuantity: parseFloat(quantity),
+                  itemUnitPrice: parseFloat(unitPrice),
+                  itemDiscount: parseFloat(discount),
+                  expense: parseFloat(expense),
+                  package: expense > 0 ? "Packed" : "Lose",
+                  itemProfit:
+                    parseFloat(unitPrice) -
+                    selectedItem.buyingUnitPrice -
+                    expense,
+                  total:
+                    discount > 0
+                      ? quantity * unitPrice -
+                        quantity * unitPrice * (discount / 100)
+                      : quantity * unitPrice,
+                  totalProfit:
+                    discount > 0
+                      ? quantity * unitPrice -
+                        quantity * selectedItem.buyingUnitPrice -
+                        quantity * expense -
+                        quantity * unitPrice * (discount / 100)
+                      : quantity * unitPrice -
+                        quantity * selectedItem.buyingUnitPrice -
+                        quantity * expense,
+                });
+
               clearField();
             }}
             className="bg-black p-2 rounded-lg text-sm text-white font-medium cursor-pointer "
@@ -285,7 +352,7 @@ const AccountForm = () => {
           </a>
         </div>
 
-        <div className="w-2/4 bg-white p-3 border rounded-lg">
+        <div className="w-2/4 bg-white p-3 border rounded-lg salesItems">
           <table className="table text-gray-600">
             <thead>
               <tr>
@@ -295,6 +362,7 @@ const AccountForm = () => {
                 <th>Unit Price</th>
                 <th>Discount</th>
                 <th>Total</th>
+                <th>Profit</th>
                 <th>Delete</th>
               </tr>
             </thead>
@@ -310,6 +378,7 @@ const AccountForm = () => {
                     <td> {field.itemUnitPrice} </td>
                     <td> {field.itemDiscount} % </td>
                     <td> {field.total} </td>
+                    <td> {field.totalProfit} </td>
                     <td className="text-red-700 hover:text-red-800">
                       {" "}
                       <FaTrash
@@ -325,80 +394,85 @@ const AccountForm = () => {
         </div>
       </div>
 
-      <div className="w-full px-3 mt-3">
-        <label
-          className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-          for="customer-name"
-        >
-          Customer's Name
-        </label>
-        <input
-          className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-          id="customer-name"
-          type="text"
-          placeholder="Customer's Name"
-          {...register("customerName", { required: true })}
-        />
-        {errors.customerName && (
-          <span className="text-red-600">This field is required</span>
-        )}
-      </div>
-      <div className="w-full px-3">
-        <label
-          className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-          for="customer-email"
-        >
-          Customer's Email
-        </label>
-        <input
-          className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-          id="customer-email"
-          type="text"
-          placeholder="Email"
-          {...register("email", { required: false })}
-        />
-        {errors.email && (
-          <span className="text-red-600">This field is required</span>
-        )}
-      </div>
-      <div className="w-full px-3">
-        <label
-          className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-          for="customer-phone"
-        >
-          Customer's Phone
-        </label>
-        <input
-          className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-          id="customer-phone"
-          type="text"
-          placeholder="Contact No"
-          {...register("phone", { required: true })}
-        />
-        {errors.phone && (
-          <span className="text-red-600">This field is required</span>
-        )}
-      </div>
-      <div className="w-full px-3">
-        <label
-          className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-          for="customer-address"
-        >
-          Cutomer's Address
-        </label>
-        <input
-          className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-          id="customer-address"
-          type="text"
-          placeholder="Address"
-          {...register("address", { required: true })}
-        />
-        {errors.address && (
-          <span className="text-red-600">This field is required</span>
-        )}
+      <div className="flex flex-wrap mx-.5 mb-2 mt-4">
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="customer-name"
+          >
+            Customer's Name
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="customer-name"
+            type="text"
+            placeholder="Customer's Name"
+            {...register("customerName", { required: true })}
+          />
+          {errors.customerName && (
+            <span className="text-red-600">This field is required</span>
+          )}
+        </div>
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="customer-email"
+          >
+            Customer's Email
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="customer-email"
+            type="text"
+            placeholder="Email"
+            {...register("email", { required: false })}
+          />
+          {errors.email && (
+            <span className="text-red-600">This field is required</span>
+          )}
+        </div>
       </div>
       <div className="flex flex-wrap mx-.5 mb-2">
-        <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="customer-phone"
+          >
+            Customer's Phone
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="customer-phone"
+            type="text"
+            placeholder="Contact No"
+            {...register("phone", { required: true })}
+          />
+          {errors.phone && (
+            <span className="text-red-600">This field is required</span>
+          )}
+        </div>
+        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="customer-address"
+          >
+            Cutomer's Address
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="customer-address"
+            type="text"
+            placeholder="Address"
+            {...register("address", { required: true })}
+          />
+          {errors.address && (
+            <span className="text-red-600">This field is required</span>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap mx-.5 mb-2">
+        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             for="grand-total"
@@ -417,7 +491,7 @@ const AccountForm = () => {
             <span className="text-red-600">This field is required</span>
           )}
         </div>
-        <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             for="total-sale"
@@ -460,7 +534,7 @@ const AccountForm = () => {
             </div>
           </div>
         </div> */}
-        <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             for="due"
@@ -475,6 +549,22 @@ const AccountForm = () => {
             value={grandTotal - paid}
           />
         </div>
+        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
+          <label
+            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+            for="due"
+          >
+            Total Profit
+          </label>
+          <input
+            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            id="due"
+            type="text"
+            placeholder="Due"
+            value={totalSaleProfit}
+            onChange={(e) => setTotalSaleProfit(e.target.value)}
+          />
+        </div>
       </div>
       <input
         type="submit"
@@ -485,4 +575,4 @@ const AccountForm = () => {
   );
 };
 
-export default AccountForm;
+export default SaleForm;

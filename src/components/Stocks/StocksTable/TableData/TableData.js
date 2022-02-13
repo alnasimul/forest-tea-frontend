@@ -7,6 +7,7 @@ const TableData = ({ stockItem, index, deleteStock }) => {
   const {
     _id,
     productName,
+    grade,
     productType,
     sellingUnitPrice,
     stock,
@@ -39,10 +40,11 @@ const TableData = ({ stockItem, index, deleteStock }) => {
         <td className="p-4 border-b border-r" data-label="Serial">{index + 1}</td>
         <td className="p-4 border-b border-r" data-label="Date">{stockDate}</td>
         <td className="p-4 border-b border-r" data-label="Name">{productName}</td>
+        <td className="p-4 border-b border-r" data-label="Grade">{grade}</td>
         <td className="p-4 border-b border-r" data-label="Category">{productType}</td>
         <td className="p-4 border-b border-r" data-label="Selling (Unit Price)">{sellingUnitPrice}</td>
-        <td className="p-4 border-b border-r" data-label="Available Stocks">{stock}</td>
         <td className="p-4 border-b border-r" data-label="Buying (Unit Price)">{buyingUnitPrice}</td>
+        <td className="p-4 border-b border-r" data-label="Available Stocks">{stock} Kg</td>
         <td className="p-4 border-b border-r" data-label="Grand Total">{grandTotal}</td>
         <td className="p-4 border-b border-r text-green-700" data-label="Paid">{paid}</td>
         <td className="p-4 border-b border-r text-red-700" data-label="Due">{due}</td>

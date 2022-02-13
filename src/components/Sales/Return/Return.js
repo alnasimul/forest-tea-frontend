@@ -5,7 +5,7 @@ import { FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import forestTeaApi from "../../../helpers/forestTeaApi";
-import SearchedItems from "../AccountForm/SearchedItems/SearchedItems";
+import SearchedItems from "../SaleForm/SearchedItems/SearchedItems";
 
 const Return = ({ record, stocks }) => {
   const { _id, customerName, email, phone, address, items, invoiceNo, grandTotal, paid } =
@@ -28,12 +28,18 @@ const Return = ({ record, stocks }) => {
   const [unitPrice, setUnitPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [updateGrandTotal, setUpdateGrandTotal] = useState(grandTotal);
+  const [expense, setExpense] = useState(0);
+  const [returnSaleProfit, setReturnSaleProfit] = useState(0);
   const [updatePaid, setUpdatePaid] = useState(paid);
 
   //setDiscount(discount > 0 ? (quantity * unitPrice) - ((quantity * unitPrice) * (discount/100)) : quantity*unitPrice)
   
-  useEffect(() => calculateGrandTotal(), [fields]);
+  useEffect(() => {
+    calculateGrandTotal()
+    calculateTotalSaleProfit()
+  }, [fields]);
   useEffect(() => getProducts(), [item])
+  useEffect(() => prepend(items), [])
 
   
 
@@ -63,6 +69,13 @@ const Return = ({ record, stocks }) => {
     fields.map((field) => (total = total + field.total));
     console.log(total);
     setUpdateGrandTotal(total);
+  };
+
+  const calculateTotalSaleProfit = () => {
+    let total = 0;
+    fields.map((field) => (total = total + field.totalProfit));
+    console.log(total);
+    setReturnSaleProfit(total);
   };
 
   const getProducts = () => {
@@ -97,6 +110,7 @@ const Return = ({ record, stocks }) => {
     data.due = updateGrandTotal - updatePaid;
     data.paid = updatePaid;
     data.grandTotal = parseInt(updateGrandTotal);
+    data.returnSaleProfit = parseFloat(returnSaleProfit);
     data.returnDate = new Date().toDateString();
     data.month = months[new Date().getMonth()];
     data.year = new Date().getFullYear();
@@ -122,8 +136,8 @@ const Return = ({ record, stocks }) => {
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex bg-gray-100 p-3 rounded-lg">
         <div className="w-2/4 ">
-          <div className="flex flex-wrap -mx-3 mb-6">
-            <div className="w-full px-3">
+        <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label
                 htmlFor="items"
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -140,13 +154,80 @@ const Return = ({ record, stocks }) => {
                 onChange={(e) => handleChange(e)}
               />
               {errors.requiredField && <span>This field is required</span>}
-             
-              { searchedItems.length > 0 &&
-                <div className="bg-white p-3 mx-1 rounded border ">
-                  {searchedItems.map( item => <SearchedItems key={item._id} item={item} selectProduct={selectProduct} />)}
-                </div>
-              }
 
+              {searchedItems.length > 0 && (
+                <div className="bg-white p-3 mx-1 rounded border ">
+                  {searchedItems.map((item) => (
+                    <SearchedItems
+                      key={item._id}
+                      item={item}
+                      selectProduct={selectProduct}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* <div className="relative">
+                <select
+                  className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  id="grid-state"
+                  defaultValue=""
+                  onClick={(e) => {
+                    setProductId(e.target.value)
+                    getItemAndPrice()
+                  }}
+                >
+                  <option disabled={true} value={``}>
+                    Select Item
+                  </option>
+                  {stocks.map((stock) => (
+                    <option
+                      value={stock._id} 
+                    >
+                      {stock.productName} - {stock.productType}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg
+                    className="fill-current h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+              </div> */}
+            </div>
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              >
+                Packeging
+              </label>
+              <div className="relative">
+                <select
+                  className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                  onClick={(e) => {
+                    setExpense(e.target.value);
+                  }}
+                >
+                  <option disabled={true} value={``}>
+                    Select
+                  </option>
+                  <option value={0}>Lose</option>
+                  <option value={7}>Packed</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg
+                    className="fill-current h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
@@ -235,17 +316,33 @@ const Return = ({ record, stocks }) => {
           </div>
           <a
             onClick={() => {
+              ( item && quantity > 0) &&
               append({
                 item: selectedItem.productName,
                 productId: selectedItem._id,
                 itemQuantity: parseFloat(quantity),
                 itemUnitPrice: parseFloat(unitPrice),
                 itemDiscount: parseFloat(discount),
+                expense: parseFloat(expense),
+                package: expense > 0 ? "Packed" : "Lose",
+                itemProfit:
+                  parseFloat(unitPrice) -
+                  selectedItem.buyingUnitPrice -
+                  expense,
                 total:
                   discount > 0
                     ? quantity * unitPrice -
                       quantity * unitPrice * (discount / 100)
                     : quantity * unitPrice,
+                totalProfit:
+                  discount > 0
+                    ? quantity * unitPrice -
+                      quantity * selectedItem.buyingUnitPrice -
+                      quantity * expense -
+                      quantity * unitPrice * (discount / 100)
+                    : quantity * unitPrice -
+                      quantity * selectedItem.buyingUnitPrice -
+                      quantity * expense,
               });
               clearField();
             }}
@@ -264,6 +361,7 @@ const Return = ({ record, stocks }) => {
                 <th>Price</th>
                 <th>Discount</th>
                 <th>Total</th>
+                <th>Profit</th>
                 <th>Delete</th>
               </tr>
             </thead>
@@ -279,6 +377,7 @@ const Return = ({ record, stocks }) => {
                     <td> {field.itemUnitPrice} </td>
                     <td> {field.itemDiscount} % </td>
                     <td> {field.total} </td>
+                    <td> {field.totalProfit} </td>
                     <td className="text-red-700 hover:text-red-800">
                       {" "}
                       <FaTrash

@@ -23,10 +23,11 @@ const StocksTable = ({stocks}) => {
                     <th className='px-6'>Serial</th>
                     <th className='px-6'>Date</th>
                     <th className='px-6'>Name</th>
+                    <th className='px-6'>Grade</th>
                     <th className='px-6'>Category</th>
                     <th className='px-6'>Selling (Unit Price)</th>
-                    <th className='px-6'>Available Stocks</th>
                     <th className='px-6'>Buying (Unit Price)</th>
+                    <th className='px-6'>Available Stocks</th>
                     <th className='px-6'>Grand Total</th>
                     <th className='px-6'>Paid</th>
                     <th className='px-6'>Due</th>

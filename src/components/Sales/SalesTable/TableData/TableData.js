@@ -23,6 +23,7 @@ const TableData = ({
     items,
     purchaseDate,
     grandTotal,
+    totalSaleProfit,
     paid,
     due,
   } = record;
@@ -93,8 +94,11 @@ const TableData = ({
               <tr>
                 <th className="px-2">Item</th>
                 <th className="px-2">Quantity</th>
-                <th className="px-2">Unit Price</th>
+                <th className="px-2">Rate</th>
                 <th className="px-2">Total</th>
+                <th className="px-2">Profit</th>
+                <th className="px-2">Packeging</th>
+
               </tr>
             </thead>
             <tbody>
@@ -103,15 +107,17 @@ const TableData = ({
                   <p className="text-center">Serial #{index + 1}</p>
                   <td className="px-2" data-label="Item">{item.item}</td>
                   <td className="px-2" data-label="Quantity">{item.itemQuantity}</td>
-                  <td className="px-2" data-label="Unit Price">{item.itemUnitPrice}</td>
+                  <td className="px-2" data-label="Rate">{item.itemUnitPrice}</td>
                   <td className="px-2" data-label="Total">{item.total} - (After {item.itemDiscount} %)</td>
+                  <td className="px-2" data-label="Total">{item.totalProfit}</td>
+                  <td className="px-2" data-label="Total">{item.package}</td>
                   <hr />
                 </tr>
               ))}
             </tbody>
           </table>
         </td>
-        <td className="px-4 border-b border-r" data-label="Grand Total">{grandTotal}</td>
+        <td className="px-4 border-b border-r" data-label="Grand Total - (Profit)">{grandTotal} - ({totalSaleProfit})</td>
         <td className="px-10 border-b border-r" data-label="Paid - Due">
           {" "}
           <span className="text-green-600 font-bold"> {paid} </span>{" "}

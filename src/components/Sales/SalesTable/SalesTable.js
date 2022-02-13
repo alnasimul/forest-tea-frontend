@@ -3,9 +3,9 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import forestTeaApi from "../../../helpers/forestTeaApi";
 import TableData from "./TableData/TableData";
-import './AccountsTable.css';
+import './SalesTable.css';
 
-const AccountsTable = ({ records }) => {
+const SalesTable = ({ records }) => {
   const updatePaymentStatus = (id, status) => {
     try {
       forestTeaApi
@@ -68,7 +68,7 @@ const AccountsTable = ({ records }) => {
               <th className="px-4">Address</th>
               <th className="px-4">Date</th>
               <th>Items (Sold)</th>
-              <th className="px-4">Grand Total</th>
+              <th className="px-10">Total - (Profit)</th>
               <th className="px-1">Paid - Due</th>
               <th>Status (Payment, Delivery)</th>
               <th className="px-4">Actions</th>
@@ -95,4 +95,4 @@ const AccountsTable = ({ records }) => {
   );
 };
 
-export default AccountsTable;
+export default SalesTable;

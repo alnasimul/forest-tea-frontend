@@ -31,9 +31,9 @@ const Header = () => {
               Home
             </a>
           </Link>
-          <Link to="/accounts">
+          <Link to="/sales">
             <a className="mx-3 md:mx-5 cursor-pointer font-bold text-green-700 hover:text-green-900 uppercase">
-              Accounts
+              Sales
             </a>
           </Link>
           <Link to="/returns">

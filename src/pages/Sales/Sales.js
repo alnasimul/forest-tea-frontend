@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FaPlus, FaSearch } from "react-icons/fa";
-import AccountForm from "../../components/Accounts/AccountForm/AccountForm";
-import AccountsTable from "../../components/Accounts/AccountsTable/AccountsTable";
-import SearchForm from "../../components/Accounts/SearchForm/SearchForm";
+import SearchForm from "../../components/Sales/SearchForm/SearchForm";
 import Layout from "../../components/Layout/Layout";
 import Modal from "../../components/Modal/Modal";
+import SaleForm from "../../components/Sales/SaleForm/SaleForm";
+import SalesTable from "../../components/Sales/SalesTable/SalesTable";
 import forestTeaApi from "../../helpers/forestTeaApi";
 
-const Accounts = () => {
+const Sales = () => {
   const [records, setRecords] = useState([]);
   const [stocks, setStocks] = useState([]);
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -55,6 +55,12 @@ const Accounts = () => {
     return totalDue;
   };
 
+  const calculateTotalProfit = (datas) => {
+    let totalProfit = 0;
+    datas.map(data => (totalProfit = totalProfit + parseFloat(data.totalSaleProfit)));
+    return totalProfit;
+  }
+
   const getSearchRecords = (data) => {
     setRecords(data);
   };
@@ -80,7 +86,7 @@ const Accounts = () => {
             </button>
           </div>
           <Modal modalIsOpen={modalIsOpen} closeModal={closeModal}>
-            <AccountForm />
+              <SaleForm/>
           </Modal>
           {searchForm && (
             <SearchForm
@@ -89,18 +95,19 @@ const Accounts = () => {
               getSearchRecords={getSearchRecords}
             />
           )}
-          {salesTable && <AccountsTable records={records} stocks={stocks} />}
+          {salesTable && <SalesTable records={records} stocks={stocks} />}
           {salesTable && (
             <h2 className="forMobile text-sm font-bold text-right italic my-3">
               <span className="bg-gray-200 rounded-lg p-2 ">
                 <span>Total Sold: {calculateTotalBill(records)} ( </span>
                 <span className="text-green-700">
-                  {calculateTotalPaid(records)} Paid
+                  {calculateTotalPaid(records)} Paid 
                 </span>
+                <span className="text-yellow-600"> ( {calculateTotalProfit(records)} Profit ) </span>
                 <span className="text-gray-500"> || </span>
                 <span className="text-red-600">
                   {calculateDue(records)} Due
-                </span>
+                 </span>
                 )
               </span>
             </h2>
@@ -111,4 +118,4 @@ const Accounts = () => {
   );
 };
 
-export default Accounts;
+export default Sales;
