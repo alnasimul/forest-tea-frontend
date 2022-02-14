@@ -38,7 +38,7 @@ const StockForm = ({ closeModal }) => {
     data.grandTotal = stock * buyingUnitPrice;
     data.paid = parseFloat(paid);
     data.due = parseFloat(stock * buyingUnitPrice - paid);
-    data.stockDate = new Date().toDateString();
+    data.stockDate = new Date();
     data.month = months[new Date().getMonth()];
     data.year = new Date().getFullYear();
 

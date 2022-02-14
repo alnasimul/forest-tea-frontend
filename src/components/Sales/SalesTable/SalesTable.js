@@ -54,6 +54,8 @@ const SalesTable = ({ records }) => {
     } catch (error) {}
   };
 
+  console.log("records", records)
+
   return (
     <>
       {records.length > 0 ? (
@@ -87,7 +89,7 @@ const SalesTable = ({ records }) => {
           </tbody>
         </table>
       ) : (
-        <h2 className="text-2xl text-center mt-10 text-red-600 italic ">
+        <h2 className="text-2xl text-center my-20 text-red-600 italic ">
           No records found
         </h2>
       )}

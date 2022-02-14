@@ -30,6 +30,7 @@ const SearchForm = ({ closeSearchForm, getSearchRecords, openSalesTable }) => {
   const onSubmit = (data) => {
     data.invoiceNo = parseInt(data.invoiceNo)  
     data.month = month;
+    data.year = parseInt(data.year)
 
     try {
         forestTeaApi.post(`/searchAccountRecords`,data)

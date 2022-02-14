@@ -18,6 +18,8 @@ const TableData = ({ stockItem, index, deleteStock }) => {
     stockDate,
   } = stockItem;
 
+  const formatedDate = new Date(stockDate).toDateString()
+
   const [modalIsOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
@@ -38,7 +40,7 @@ const TableData = ({ stockItem, index, deleteStock }) => {
     <>
       <tr>
         <td className="p-4 border-b border-r" data-label="Serial">{index + 1}</td>
-        <td className="p-4 border-b border-r" data-label="Date">{stockDate}</td>
+        <td className="p-4 border-b border-r" data-label="Date">{formatedDate}</td>
         <td className="p-4 border-b border-r" data-label="Name">{productName}</td>
         <td className="p-4 border-b border-r" data-label="Grade">{grade}</td>
         <td className="p-4 border-b border-r" data-label="Category">{productType}</td>

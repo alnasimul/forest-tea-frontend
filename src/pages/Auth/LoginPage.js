@@ -78,10 +78,13 @@ const LoginPage = () => {
 
         <input
           type="submit"
-          className="bg-black hover:text-gray-100 font-bold italic hover:bg-gray-700 text-white p-3 rounded-lg w-full cursor-pointer mt-3"
+          className="bg-black hover:text-gray-100 font-bold italic hover:bg-gray-700 text-white p-3 rounded-lg w-full cursor-pointer"
           value="Login"
         ></input>
       </form>
+      {
+        user.error && <p className="text-danger mt-2">{user.error}</p>
+      }
       <p className="mt-2">
         <Link to="/forgotpassword">
           <span className="hover:text-gray-500 cursor-pointer ">Forgot password? click here to reset password.</span>

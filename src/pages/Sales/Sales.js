@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FaPlus, FaSearch } from "react-icons/fa";
+import { FaCalendarDay, FaPlus, FaSearch } from "react-icons/fa";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import SearchForm from "../../components/Sales/SearchForm/SearchForm";
 import Layout from "../../components/Layout/Layout";
 import Modal from "../../components/Modal/Modal";
@@ -13,6 +15,8 @@ const Sales = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [searchForm, setSearchForm] = useState(false);
   const [salesTable, setSalesTable] = useState(true);
+  const [calendar, setCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const openModal = () => {
     setIsOpen(true);
@@ -32,11 +36,12 @@ const Sales = () => {
 
   useEffect(() => {
     forestTeaApi
-      .get(`/dailyAccounts/${new Date().toDateString()}`)
+      .get(`/dailyAccounts/${new Date(selectedDate).toDateString()}`)
       .then((res) => {
         setRecords(res.data);
       });
-  }, []);
+      setCalendar(false)
+  }, [selectedDate]);
 
   const calculateTotalBill = (datas) => {
     let total = 0;
@@ -57,13 +62,19 @@ const Sales = () => {
 
   const calculateTotalProfit = (datas) => {
     let totalProfit = 0;
-    datas.map(data => (totalProfit = totalProfit + parseFloat(data.totalSaleProfit)));
+    datas.map(
+      (data) => (totalProfit = totalProfit + parseFloat(data.totalSaleProfit))
+    );
     return totalProfit;
-  }
+  };
 
   const getSearchRecords = (data) => {
     setRecords(data);
   };
+
+  console.log(selectedDate)
+  console.log(records)
+
   return (
     <Layout>
       <div className="grid md:grid-cols-1 lg:grid-cols-1 md:gap-10 sm:flex sm:justify-between">
@@ -84,9 +95,18 @@ const Sales = () => {
             >
               <FaSearch className="mt-1 mr-2" /> Search
             </button>
+            <button
+              className="bg-purple-500 hover:bg-purple-600 text-white p-2 rounded flex mb-3 uppercase ml-2"
+              onClick={() => {
+                setCalendar(true);
+                setSalesTable(false);
+              }}
+            >
+              <FaCalendarDay className="mt-1 mr-2" /> Search by Date
+            </button>
           </div>
           <Modal modalIsOpen={modalIsOpen} closeModal={closeModal}>
-              <SaleForm/>
+            <SaleForm />
           </Modal>
           {searchForm && (
             <SearchForm
@@ -95,19 +115,40 @@ const Sales = () => {
               getSearchRecords={getSearchRecords}
             />
           )}
+          {calendar && (
+            <div className="container relative p-5 shadow-sm rounded w-1/4 mb-5 flex justify-center ">
+              <button
+                className="bg-red-700  hover:bg-red-800 p-1 rounded text-white absolute top-0 right-0"
+                onClick={() => {
+                  setCalendar(false)
+                  openSalesTable();
+                }}
+              >
+                Close x
+              </button>
+              <div className="w-full" onClick={() => {
+                openSalesTable();
+                }}>
+                <Calendar onChange={setSelectedDate}  defaultValue={selectedDate} />
+              </div>
+            </div>
+          )}
           {salesTable && <SalesTable records={records} stocks={stocks} />}
-          {salesTable && (
+          {(salesTable && records.length > 0)  && (
             <h2 className="forMobile text-sm font-bold text-right italic my-3">
               <span className="bg-gray-200 rounded-lg p-2 ">
                 <span>Total Sold: {calculateTotalBill(records)} ( </span>
                 <span className="text-green-700">
-                  {calculateTotalPaid(records)} Paid 
+                  {calculateTotalPaid(records)} Paid
                 </span>
-                <span className="text-yellow-600"> ( {calculateTotalProfit(records)} Profit ) </span>
+                <span className="text-yellow-600">
+                  {" "}
+                  ( {calculateTotalProfit(records)} Profit ){" "}
+                </span>
                 <span className="text-gray-500"> || </span>
                 <span className="text-red-600">
                   {calculateDue(records)} Due
-                 </span>
+                </span>
                 )
               </span>
             </h2>

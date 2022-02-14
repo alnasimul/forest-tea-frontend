@@ -1,12 +1,26 @@
-import React, { useContext } from "react";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaSignInAlt, FaSignOutAlt, FaUser } from "react-icons/fa";
 import brandlogo from "../../assets/brandLogoEdited01.png";
 import "./Header.css";
 import { AuthContext } from "../../context/AuthContext";
+import forestTeaApi from "../../helpers/forestTeaApi";
 
 const Header = () => {
   const {user, signOut} = useContext(AuthContext)
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    if(user){
+      forestTeaApi.get(`/checkAdmin/${user.email}`)
+      .then(res =>  {
+      setIsAdmin(res.data)
+      sessionStorage.setItem("admin", res.data)
+    } )
+  }},[user])
+  const admin = sessionStorage.getItem("admin");
+
+  console.log("admin",admin)
   return (
     <div className="bg-slate-100 text-gray-100 shadow-md w-full ">
       <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
@@ -46,11 +60,13 @@ const Header = () => {
               Stocks
             </a>
           </Link>
-          <Link to="/register">
-            <a className="mx-3 md:mx-5 cursor-pointer font-bold text-green-700 hover:text-green-900 uppercase flex">
-             <FaUser className="mt-1 mr-2"/> Register New Staff
-            </a>
-          </Link>
+          {
+           ( isAdmin || admin) &&  <Link to="/register">
+           <a className="mx-3 md:mx-5 cursor-pointer font-bold text-green-700 hover:text-green-900 uppercase flex">
+            <FaUser className="mt-1 mr-2"/> Register New Staff
+           </a>
+         </Link>
+          }
           {
             user.email && <p className="mx-3 md:mx-5 cursor-pointer text-green-700 hover:text-green-900  flex"> (Welcome, {user.name}) </p>
           }

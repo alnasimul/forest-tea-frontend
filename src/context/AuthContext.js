@@ -51,14 +51,24 @@ const AuthProvider = ({ children }) => {
     });
   };
   const handleResponse = (res, redirect, history, from) => {
+
     if (res.success) {
       setUser(res);
+    }else if(res.error){
+      const faliedUser = { 
+        isSignedIn: false,
+        name: "",
+        email: "",
+        photo: "",
+        error: res.error,
+        success: res.success,}
+      setUser(faliedUser)
     }
 
-    sessionStorage.clear();
+   
     // setLoggedInUser(res);
 
-    if (redirect) {
+    if (res.success && redirect) {
       storeAuthToken(res);
       setTimeout(() => {
         history.replace(from);
@@ -75,6 +85,8 @@ const AuthProvider = ({ children }) => {
       error: "",
       success: false,
     };
+    sessionStorage.clear();
+    window.location.reload();
     handleResponse(signedOutUser, false);
   };
   const checkUserLoggedIn = () => {
@@ -103,7 +115,6 @@ const AuthProvider = ({ children }) => {
       }
     });
   };
- // console.log(location)
   return (
     <AuthContext.Provider
       value={{
