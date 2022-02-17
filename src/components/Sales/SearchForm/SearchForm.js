@@ -65,7 +65,7 @@ const SearchForm = ({ closeSearchForm, getSearchRecords, openSalesTable }) => {
           <div className="w-full md:w-2/4 px-3 mb-6 md:mb-0">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="InvoiceNo"
+              htmlFor="InvoiceNo"
             >
               Invoice No
             </label>
@@ -82,7 +82,7 @@ const SearchForm = ({ closeSearchForm, getSearchRecords, openSalesTable }) => {
           <div className="w-full md:w-2/4 px-3 mb-6 md:mb-0">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="customer-name"
+              htmlFor="customer-name"
             >
               Customer's Name
             </label>
@@ -101,7 +101,7 @@ const SearchForm = ({ closeSearchForm, getSearchRecords, openSalesTable }) => {
           <div className="w-full md:w-2/4 px-3 mb-6 md:mb-0">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="customer-email"
+              htmlFor="customer-email"
             >
               Customer's Email
             </label>
@@ -118,7 +118,7 @@ const SearchForm = ({ closeSearchForm, getSearchRecords, openSalesTable }) => {
           <div className="w-full md:w-2/4 px-3 mb-6 md:mb-0">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="customer-phone"
+              htmlFor="customer-phone"
             >
               Customer's Phone
             </label>
@@ -137,7 +137,7 @@ const SearchForm = ({ closeSearchForm, getSearchRecords, openSalesTable }) => {
           <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="customer-address"
+              htmlFor="customer-address"
             >
               Customer's Address
             </label>

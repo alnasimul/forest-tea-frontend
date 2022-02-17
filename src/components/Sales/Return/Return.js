@@ -18,7 +18,7 @@ const Return = ({ record, stocks }) => {
   } = useForm();
   const { fields, append, prepend, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
-    name: "items", // unique name for your Field Array
+    name: "items", // unique name htmlFor your Field Array
     // keyName: "id", default to "id", you can change the key name
   });
   const [searchedItems, setSearchedItems] = useState([]);
@@ -234,7 +234,7 @@ const Return = ({ record, stocks }) => {
             <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                for="product-quantity"
+                htmlFor="product-quantity"
               >
                 Quantity
               </label>
@@ -256,7 +256,7 @@ const Return = ({ record, stocks }) => {
             <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                for="unit-price"
+                htmlFor="unit-price"
               >
                 Unit Price
               </label>
@@ -277,7 +277,7 @@ const Return = ({ record, stocks }) => {
             <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                for="discount"
+                htmlFor="discount"
               >
                 Discount
               </label>
@@ -297,7 +297,7 @@ const Return = ({ record, stocks }) => {
             <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                for="total"
+                htmlFor="total"
               >
                 Total
               </label>
@@ -396,7 +396,7 @@ const Return = ({ record, stocks }) => {
       <div className="w-full px-3 mt-3">
         <label
           className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-          for="customer-name"
+          htmlFor="customer-name"
         >
           Customer's Name
         </label>
@@ -415,7 +415,7 @@ const Return = ({ record, stocks }) => {
       <div className="w-full px-3">
         <label
           className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-          for="customer-email"
+          htmlFor="customer-email"
         >
           Customer's Email
         </label>
@@ -434,7 +434,7 @@ const Return = ({ record, stocks }) => {
       <div className="w-full px-3">
         <label
           className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-          for="customer-phone"
+          htmlFor="customer-phone"
         >
           Customer's Phone
         </label>
@@ -453,7 +453,7 @@ const Return = ({ record, stocks }) => {
       <div className="w-full px-3">
         <label
           className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-          for="customer-address"
+          htmlFor="customer-address"
         >
           Cutomer's Address
         </label>
@@ -473,7 +473,7 @@ const Return = ({ record, stocks }) => {
         <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            for="grand-total"
+            htmlFor="grand-total"
           >
             Grand Total
           </label>
@@ -492,7 +492,7 @@ const Return = ({ record, stocks }) => {
         <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            for="total-sale"
+            htmlFor="total-sale"
           >
             Paid
           </label>
@@ -508,7 +508,7 @@ const Return = ({ record, stocks }) => {
         {/* <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            for="grid-state"
+            htmlFor="grid-state"
           >
             Months
           </label>
@@ -535,7 +535,7 @@ const Return = ({ record, stocks }) => {
         <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            for="due"
+            htmlFor="due"
           >
             Due
           </label>

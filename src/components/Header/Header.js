@@ -21,6 +21,7 @@ const Header = () => {
   const admin = sessionStorage.getItem("admin");
 
   console.log("admin",admin)
+  console.log(isAdmin)
   return (
     <div className="bg-slate-100 text-gray-100 shadow-md w-full ">
       <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
@@ -61,7 +62,7 @@ const Header = () => {
             </a>
           </Link>
           {
-           ( isAdmin || admin) &&  <Link to="/register">
+           (isAdmin || admin === true) &&  <Link to="/register">
            <a className="mx-3 md:mx-5 cursor-pointer font-bold text-green-700 hover:text-green-900 uppercase flex">
             <FaUser className="mt-1 mr-2"/> Register New Staff
            </a>

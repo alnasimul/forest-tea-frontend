@@ -26,11 +26,6 @@ const AuthProvider = ({ children }) => {
 
   initializeLoginFramework();
 
-  // const history = useHistory();
-  // const location = useLocation();
-
-  // let { from } = location.state || { from: { pathname: "/" } };
-
   useEffect(() => {
     checkUserLoggedIn();
   }, []);
@@ -40,9 +35,9 @@ const AuthProvider = ({ children }) => {
       handleResponse(res, true);
     });
   };
-  const register = (name, email, password) => {
+  const register = (name, email, password, history, from) => {
     createUserWithEmailAndPassword(name, email, password).then((res) => {
-      handleResponse(res, false);
+      handleResponse(res, true, history, from);
     });
   };
   const login = (email, password, history, from) => {
@@ -53,8 +48,9 @@ const AuthProvider = ({ children }) => {
   const handleResponse = (res, redirect, history, from) => {
 
     if (res.success) {
+      console.log("context",res)
       setUser(res);
-    }else if(res.error){
+     }else if(res.error){
       const faliedUser = { 
         isSignedIn: false,
         name: "",

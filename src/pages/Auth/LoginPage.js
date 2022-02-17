@@ -32,7 +32,7 @@ const LoginPage = () => {
   return (
     <div className="container w-full p-10 max-w-lg shadow-md rounded mt-20 ml-90">
       <div className="mb-4 flex justify-center">
-        <Link to="/">
+        <Link to="/sales">
         <img src={brandlogo} width={180} height={100} alt="logo"  />
         </Link>
       </div>
@@ -41,7 +41,7 @@ const LoginPage = () => {
           <div className="w-full px-3">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="email"
+              htmlFor="email"
             >
               Email
             </label>
@@ -59,7 +59,7 @@ const LoginPage = () => {
           <div className="w-full px-3">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="password"
+              htmlFor="password"
             >
               Password
             </label>

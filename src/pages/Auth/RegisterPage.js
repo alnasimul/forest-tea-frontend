@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import brandlogo from "../../assets/brandLogoEdited01.png";
 import { AuthContext } from "../../context/AuthContext";
 const RegisterPage = () => {
@@ -12,20 +13,26 @@ const RegisterPage = () => {
   const [error, setError] = useState("");
 
   const { user, register } = useContext(AuthContext);
+  const history = useHistory();
+  const location = useLocation();
+
+  let { from } = location.state || { from: { pathname: "/" } };
 
   if (user.error) {
     setError(user.error);
   }
 
-
-
   useEffect(() => error && toast.error(error));
+
+  // if(user.accountCreated){
+  //   setTimeout(() => window.location.reload(),1500)
+  // }
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password === passwordConfirm) {
       if (username && email && password) {
-        register(username, email, password);
+        register(username, email, password, history, from);
       }
     } else {
       toast.error(
@@ -33,25 +40,28 @@ const RegisterPage = () => {
       );
     }
   };
+
+  console.log(user);
   return (
     <div className="container w-full p-10 max-w-lg shadow-md rounded mt-20 ml-90">
       <ToastContainer />
-      <div className="mb-4">
-        <img
-          src={brandlogo}
-          width={180}
-          height={100}
-          alt="logo"
-          className=""
-          style={{ marginLeft: "128px" }}
-        />
+      <div className="mb-4 flex justify-center">
+        <Link to="/sales">
+          <img
+            src={brandlogo}
+            width={180}
+            height={100}
+            alt="logo"
+            className=""
+          />
+        </Link>
       </div>
       <form className="w-full " onSubmit={handleSubmit}>
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full px-3">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="name"
+              htmlFor="name"
             >
               Name
             </label>
@@ -67,7 +77,7 @@ const RegisterPage = () => {
           <div className="w-full px-3">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="email"
+              htmlFor="email"
             >
               Email
             </label>
@@ -83,7 +93,7 @@ const RegisterPage = () => {
           <div className="w-full px-3">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="password"
+              htmlFor="password"
             >
               Password
             </label>
@@ -99,7 +109,7 @@ const RegisterPage = () => {
           <div className="w-full px-3">
             <label
               className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              for="confirmPassword"
+              htmlFor="confirmPassword"
             >
               Confirm Password
             </label>
@@ -119,6 +129,9 @@ const RegisterPage = () => {
           value="Register"
         ></input>
       </form>
+      {user.accountCreated && (
+        <p className="mt-3 text-green-600">{user.accountCreated}</p>
+      )}
       <p className="mt-3">
         Already have an account?
         <Link to="/login">
