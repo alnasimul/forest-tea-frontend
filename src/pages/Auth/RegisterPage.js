@@ -5,12 +5,14 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import brandlogo from "../../assets/brandLogoEdited01.png";
 import { AuthContext } from "../../context/AuthContext";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 const RegisterPage = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { user, register } = useContext(AuthContext);
   const history = useHistory();
@@ -18,11 +20,11 @@ const RegisterPage = () => {
 
   let { from } = location.state || { from: { pathname: "/" } };
 
-  if (user.error) {
-    setError(user.error);
-  }
+  // if (user.error) {
+  //   setError(user.error);
+  // }
 
-  useEffect(() => error && toast.error(error));
+  useEffect(() => user.error && toast.error(user.error), [user.error]);
 
   // if(user.accountCreated){
   //   setTimeout(() => window.location.reload(),1500)
@@ -97,14 +99,19 @@ const RegisterPage = () => {
             >
               Password
             </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="password"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="flex justify-between items-center relative">
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="password"
+                type={showPassword ? `text` : `password`}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              {
+                showPassword ? <FaEyeSlash onClick={() => setShowPassword(false)} className="mb-3 absolute sm:inset-x-96 inset-x-72 top-5 text-gray-500 cursor-pointer"/> : <FaEye onClick={() =>  setShowPassword(true) } className="mb-3 absolute sm:inset-x-96 inset-x-72 top-5 text-gray-500 cursor-pointer" />
+              }
+            </div>
           </div>
           <div className="w-full px-3">
             <label
@@ -113,22 +120,30 @@ const RegisterPage = () => {
             >
               Confirm Password
             </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="confirmPassword"
-              type="password"
-              placeholder="Confirm Password"
-              value={passwordConfirm}
-              onChange={(e) => setPasswordConfirm(e.target.value)}
-            />
+            <div className="flex justify-between items-center relative">
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="confirmPassword"
+                type={showConfirmPassword ? `text` : `password`}
+                placeholder="Confirm Password"
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+              />
+              {
+                showConfirmPassword ? <FaEyeSlash onClick={() => setShowConfirmPassword(false)} className="mb-3 absolute sm:inset-x-96 inset-x-72 top-5 text-gray-500 cursor-pointer"/> : <FaEye onClick={() =>  setShowConfirmPassword(true) } className="mb-3 absolute sm:inset-x-96 inset-x-72 top-5 text-gray-500 cursor-pointer" />
+              }
+            </div>
           </div>
         </div>
         <input
           type="submit"
-          className="bg-black hover:text-gray-100 font-bold italic hover:bg-gray-700 text-white p-3 rounded-lg w-full cursor-pointer mt-3"
+          className="bg-black hover:text-gray-100 font-bold italic hover:bg-gray-700 text-white p-3 rounded-lg w-full cursor-pointer mt-1"
           value="Register"
         ></input>
       </form>
+
+      {/* {user.error && <p className="text-danger mt-2">{user.error}</p>} */}
+
       {user.accountCreated && (
         <p className="mt-3 text-green-600">{user.accountCreated}</p>
       )}

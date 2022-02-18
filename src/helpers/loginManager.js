@@ -64,6 +64,10 @@ export const createUserWithEmailAndPassword = (name, email, password) => {
     })
     .catch((error) => {
       const newUserInfo = {};
+      newUserInfo.email = "";
+      newUserInfo.emailVerified = false;
+      newUserInfo.photo = "";
+      newUserInfo.isSignedIn = false;
       newUserInfo.error = error.message;
       newUserInfo.success = false;
       return newUserInfo;

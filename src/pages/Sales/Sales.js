@@ -116,9 +116,9 @@ const Sales = () => {
             />
           )}
           {calendar && (
-            <div className="container relative p-5 shadow-sm rounded w-1/4 mb-5 flex justify-center ">
+            <div className="container relative p-5 sm:shadow-sm rounded sm:w-1/4 w-full mb-5 sm:flex sm:justify-center ">
               <button
-                className="bg-red-700  hover:bg-red-800 p-1 rounded text-white absolute top-0 right-0"
+                className="bg-red-700  hover:bg-red-800 p-1.5 rounded text-white absolute sm:top-0 sm:right-0 right-10 top-1 z-10"
                 onClick={() => {
                   setCalendar(false)
                   openSalesTable();
@@ -126,10 +126,12 @@ const Sales = () => {
               >
                 Close x
               </button>
-              <div className="w-full" onClick={() => {
+              <div className="sm:w-full relative" onClick={() => {
                 openSalesTable();
                 }}>
-                <Calendar onChange={setSelectedDate}  defaultValue={selectedDate} />
+                 <div className="w-full absolute right-36 sm:relative sm:right-0">
+                 <Calendar className='' onChange={setSelectedDate}  defaultValue={selectedDate} />
+                </div> 
               </div>
             </div>
           )}

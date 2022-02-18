@@ -1,14 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import brandlogo from "../../assets/brandLogoEdited01.png";
 import { AuthContext } from "../../context/AuthContext";
-import { handleGoogleSignIn } from "../../helpers/loginManager";
 
 const LoginPage = () => {
-  const {user, login} = useContext(AuthContext); 
+  const [showPassword, setShowPassword] = useState(false);
+  const { user, login } = useContext(AuthContext);
   const history = useHistory();
   const location = useLocation();
 
@@ -20,20 +21,20 @@ const LoginPage = () => {
   } = useForm();
 
   const onSubmit = (data) => {
-    if(data.email && data.password){
-        login(data.email, data.password,history, from)
-      }
+    if (data.email && data.password) {
+      login(data.email, data.password, history, from);
+    }
     console.log(data);
   };
 
-  console.log(location)
-  
-  console.log(user)
+  console.log(location);
+
+  console.log(user);
   return (
     <div className="container w-full p-10 max-w-lg shadow-md rounded mt-20 ml-90">
       <div className="mb-4 flex justify-center">
         <Link to="/sales">
-        <img src={brandlogo} width={180} height={100} alt="logo"  />
+          <img src={brandlogo} width={180} height={100} alt="logo" />
         </Link>
       </div>
       <form className="w-full " onSubmit={handleSubmit(onSubmit)}>
@@ -63,13 +64,18 @@ const LoginPage = () => {
             >
               Password
             </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="password"
-              type="password"
-              placeholder="Password"
-              {...register("password", { required: true })}
-            />
+            <div className="flex justify-between items-center relative">
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="password"
+                type={showPassword ? `text` : `password`}
+                placeholder="Password"
+                {...register("password", { required: true })}
+              />
+               {
+                showPassword ? <FaEyeSlash onClick={() => setShowPassword(false)} className="mb-3 absolute sm:inset-x-96 inset-x-72 top-5 text-gray-500 cursor-pointer"/> : <FaEye onClick={() =>  setShowPassword(true) } className="mb-3 absolute sm:inset-x-96 inset-x-72 top-5 text-gray-500 cursor-pointer" />
+              }
+            </div>
             {errors.password && (
               <span className="text-red-600">This field is required</span>
             )}
@@ -82,14 +88,14 @@ const LoginPage = () => {
           value="Login"
         ></input>
       </form>
-      {
-        user.error && <p className="text-danger mt-2">{user.error}</p>
-      }
+      {user.error && <p className="text-danger mt-2">{user.error}</p>}
       <p className="mt-2">
         <Link to="/forgotpassword">
-          <span className="hover:text-gray-500 cursor-pointer ">Forgot password? click here to reset password.</span>
+          <span className="hover:text-gray-500 cursor-pointer ">
+            Forgot password? click here to reset password.
+          </span>
         </Link>
-      </p>        
+      </p>
 
       {/* <hr className="mt-3" />
       <h4 className="text-center mb-3 mt-2 font-bold">Or</h4>
