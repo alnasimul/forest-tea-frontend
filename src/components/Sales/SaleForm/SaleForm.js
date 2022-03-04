@@ -22,15 +22,23 @@ const SaleForm = () => {
   });
 
   const [searchedItems, setSearchedItems] = useState([]);
-  const [selectedItem, setSelectedItem] = useState({});
+  const [selectedItem, setSelectedItem] = useState({
+    grade: "",
+    productName: "",
+    productType: "",
+    stock: 0,
+  });
   const [item, setItem] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [unitPrice, setUnitPrice] = useState(0);
   const [discount, setDiscount] = useState(0);
+  const [discountTk, setDiscountTk] = useState(0);
   const [expense, setExpense] = useState(0);
+  const [totalDiscountTk, setTotalDiscountTk] = useState(0)
   const [grandTotal, setGrandTotal] = useState(0);
   const [totalSaleProfit, setTotalSaleProfit] = useState(0);
   const [paid, setPaid] = useState(0);
+  const [transport, setTransport] = useState(0)
 
   //setDiscount(discount > 0 ? (quantity * unitPrice) - ((quantity * unitPrice) * (discount/100)) : quantity*unitPrice)
 
@@ -46,11 +54,13 @@ const SaleForm = () => {
     setQuantity(0);
     setUnitPrice(0);
     setDiscount(0);
+    setDiscountTk(0);
+    setSelectedItem({ grade: "", productName: "", productType: "", stock: 0 });
   };
 
   const handleChange = (e) => {
     e.preventDefault();
-    if (e.target.name === "itemInput") {
+    if (e.target.name === "search") {
       setItem(e.target.value);
     } else if (e.target.name === "itemQuantity") {
       setQuantity(e.target.value);
@@ -58,12 +68,14 @@ const SaleForm = () => {
       setUnitPrice(e.target.value);
     } else if (e.target.name === "itemDiscount") {
       setDiscount(e.target.value);
+    } else if (e.target.name === "itemDiscountTk") {
+      setDiscountTk(e.target.value);
     }
   };
 
   const calculateGrandTotal = () => {
     let total = 0;
-    fields.map((field) => (total = total + field.total));
+    fields.map((field) => (total = total + field.total))
     console.log(total);
     setGrandTotal(total);
   };
@@ -106,8 +118,9 @@ const SaleForm = () => {
     ];
     data.due = grandTotal - paid;
     data.paid = parseFloat(paid);
-    data.grandTotal = grandTotal;
-    data.totalSaleProfit = parseFloat(totalSaleProfit);
+    data.grandTotal = grandTotal + parseFloat(transport) -  parseFloat(totalDiscountTk);
+    data.totalDiscountTk = parseFloat(totalDiscountTk);
+    data.totalSaleProfit = parseFloat(totalSaleProfit) - parseFloat(totalDiscountTk);
     data.paymentStatus = false;
     data.deliveredStatus = false;
     data.purchaseDate = new Date().toDateString();
@@ -123,45 +136,36 @@ const SaleForm = () => {
           }, 2000);
         }
       });
-       forestTeaApi.patch(`/updateProductsStocksQuantity`,data.items)
-       .then(res => console.log(res.data))
+      forestTeaApi
+        .patch(`/updateProductsStocksQuantity`, data.items)
+        .then((res) => console.log(res.data));
     } catch (error) {}
   };
- 
+
+  console.log(selectedItem);
+
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex bg-gray-100 p-3 rounded-lg">
-        <div className="w-2/4 ">
+      <div className="flex rounded-lg">
+        <div className="w-3/4 border-r-2 border-gray-400 pr-2">
           <div className="flex flex-wrap -mx-3 mb-6">
-            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
               <label
-                htmlFor="items"
+                htmlFor="search"
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
               >
-                Add items
+                Search
               </label>
 
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
                 id="items"
-                name="itemInput"
+                name="search"
                 value={item}
                 onChange={(e) => handleChange(e)}
               />
               {errors.requiredField && <span>This field is required</span>}
-
-              {searchedItems.length > 0 && (
-                <div className="bg-white p-3 mx-1 rounded border ">
-                  {searchedItems.map((item) => (
-                    <SearchedItems
-                      key={item._id}
-                      item={item}
-                      selectProduct={selectProduct}
-                    />
-                  ))}
-                </div>
-              )}
 
               {/* <div className="relative">
                 <select
@@ -195,7 +199,55 @@ const SaleForm = () => {
                 </div>
               </div> */}
             </div>
-            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
+              <label
+                htmlFor="size"
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              >
+                Product Name
+              </label>
+
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                type="text"
+                id="items"
+                value={selectedItem.productName}
+              />
+              {errors.requiredField && <span>This field is required</span>}
+            </div>
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
+              <label
+                htmlFor="size"
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              >
+                Size
+              </label>
+
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                type="text"
+                id="items"
+                value={selectedItem.grade}
+              />
+              {errors.requiredField && <span>This field is required</span>}
+            </div>
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
+              <label
+                htmlFor="ex"
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+              >
+                Ex
+              </label>
+
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                type="text"
+                id="items"
+                value={selectedItem.productType}
+              />
+              {errors.requiredField && <span>This field is required</span>}
+            </div>
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="product-quantity"
@@ -228,9 +280,35 @@ const SaleForm = () => {
                 </div>
               </div>
             </div>
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor=""
+              >
+                Packing Cost
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="stock"
+                type="text"
+                placeholder=""
+                value={expense}
+              />
+            </div>
+            {searchedItems.length > 0 && (
+              <div className="w-2/6 bg-white p-3 mx-3 rounded border ">
+                {searchedItems.map((item) => (
+                  <SearchedItems
+                    key={item._id}
+                    item={item}
+                    selectProduct={selectProduct}
+                  />
+                ))}
+              </div>
+            )}
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
-            <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="product-quantity"
@@ -252,7 +330,25 @@ const SaleForm = () => {
                 <span className="text-red-600">This field is required</span>
               )}
             </div>
-            <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="stock"
+              >
+                Stock
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="stock"
+                type="text"
+                placeholder=""
+                value={selectedItem.stock ? `${selectedItem.stock} Kg` : ""}
+              />
+              {errors.quantity && (
+                <span className="text-red-600">This field is required</span>
+              )}
+            </div>
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="unit-price"
@@ -273,12 +369,12 @@ const SaleForm = () => {
                 <span className="text-red-600">This field is required</span>
               )}
             </div>
-            <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="discount"
               >
-                Discount
+                Discount %
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -293,7 +389,27 @@ const SaleForm = () => {
                 <span className="text-red-600">This field is required</span>
               )}
             </div>
-            <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="discountTk"
+              >
+                Discount Tk
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="discountTk"
+                type="text"
+                placeholder="Taka"
+                name="itemDiscountTk"
+                value={discountTk}
+                onChange={(e) => handleChange(e)}
+              />
+              {errors.discount && (
+                <span className="text-red-600">This field is required</span>
+              )}
+            </div>
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor="total"
@@ -307,21 +423,26 @@ const SaleForm = () => {
                 value={
                   discount > 0
                     ? quantity * unitPrice -
-                      quantity * unitPrice * (discount / 100)
-                    : quantity * unitPrice
+                      quantity * unitPrice * (discount / 100) -
+                      discountTk
+                    : quantity * unitPrice - discountTk
                 }
               />
             </div>
           </div>
           <a
             onClick={() => {
-              ( item && quantity > 0) &&
+              item &&
+                quantity > 0 &&
                 append({
-                  item: selectedItem.productName, 
+                  item: selectedItem.productName,
+                  grade: selectedItem.grade,
+                  category: selectedItem.productType,
                   productId: selectedItem._id,
                   itemQuantity: parseFloat(quantity),
                   itemUnitPrice: parseFloat(unitPrice),
                   itemDiscount: parseFloat(discount),
+                  itemDiscountTk: parseFloat(discountTk),
                   expense: parseFloat(expense),
                   package: expense > 0 ? "Packed" : "Lose",
                   itemProfit:
@@ -331,17 +452,20 @@ const SaleForm = () => {
                   total:
                     discount > 0
                       ? quantity * unitPrice -
-                        quantity * unitPrice * (discount / 100)
-                      : quantity * unitPrice,
+                        quantity * unitPrice * (discount / 100) -
+                        discountTk
+                      : quantity * unitPrice - discountTk,
                   totalProfit:
                     discount > 0
                       ? quantity * unitPrice -
                         quantity * selectedItem.buyingUnitPrice -
                         quantity * expense -
-                        quantity * unitPrice * (discount / 100)
+                        quantity * unitPrice * (discount / 100) -
+                        discountTk
                       : quantity * unitPrice -
                         quantity * selectedItem.buyingUnitPrice -
-                        quantity * expense,
+                        quantity * expense -
+                        discountTk,
                 });
 
               clearField();
@@ -351,163 +475,76 @@ const SaleForm = () => {
             Add item
           </a>
         </div>
-
-        <div className="w-2/4 bg-white p-3 border rounded-lg salesItems">
-          <table className="table text-gray-600">
-            <thead>
-              <tr>
-                <th>Serial</th>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Discount</th>
-                <th>Total</th>
-                <th>Profit</th>
-                <th>Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fields.map((field, index) => {
-                return (
-                  <tr
-                    key={field.id} // important to include key with field's id
-                  >
-                    <td> {index + 1} </td>
-                    <td> {field.item} </td>
-                    <td> {field.itemQuantity} </td>
-                    <td> {field.itemUnitPrice} </td>
-                    <td> {field.itemDiscount} % </td>
-                    <td> {field.total} </td>
-                    <td> {field.totalProfit} </td>
-                    <td className="text-red-700 hover:text-red-800">
-                      {" "}
-                      <FaTrash
-                        onClick={() => remove(index)}
-                        className="mt-1 ml-2 cursor-pointer"
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap mx-.5 mb-2 mt-4">
-        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-          <label
-            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            htmlFor="customer-name"
-          >
-            Customer's Name
-          </label>
-          <input
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="customer-name"
-            type="text"
-            placeholder="Customer's Name"
-            {...register("customerName", { required: true })}
-          />
-          {errors.customerName && (
-            <span className="text-red-600">This field is required</span>
-          )}
-        </div>
-        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-          <label
-            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            htmlFor="customer-email"
-          >
-            Customer's Email
-          </label>
-          <input
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="customer-email"
-            type="text"
-            placeholder="Email"
-            {...register("email", { required: false })}
-          />
-          {errors.email && (
-            <span className="text-red-600">This field is required</span>
-          )}
-        </div>
-      </div>
-      <div className="flex flex-wrap mx-.5 mb-2">
-        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-          <label
-            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            htmlFor="customer-phone"
-          >
-            Customer's Phone
-          </label>
-          <input
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="customer-phone"
-            type="text"
-            placeholder="Contact No"
-            {...register("phone", { required: true })}
-          />
-          {errors.phone && (
-            <span className="text-red-600">This field is required</span>
-          )}
-        </div>
-        <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-          <label
-            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            htmlFor="customer-address"
-          >
-            Cutomer's Address
-          </label>
-          <input
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="customer-address"
-            type="text"
-            placeholder="Address"
-            {...register("address", { required: true })}
-          />
-          {errors.address && (
-            <span className="text-red-600">This field is required</span>
-          )}
-        </div>
-      </div>
-
-      <div className="flex flex-wrap mx-.5 mb-2">
-        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-          <label
-            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            htmlFor="grand-total"
-          >
-            Grand Total
-          </label>
-          <input
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="grand-total"
-            type="text"
-            placeholder="Grand Total"
-            value={grandTotal}
-            onChange={(e) => setGrandTotal(e.target.value)}
-          />
-          {errors.paid && (
-            <span className="text-red-600">This field is required</span>
-          )}
-        </div>
-        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-          <label
-            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            htmlFor="total-sale"
-          >
-            Paid
-          </label>
-          <input
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="total-sale"
-            type="text"
-            placeholder="Paid"
-            value={paid}
-            onChange={(e) => setPaid(e.target.value)}
-          />
-        </div>
-        {/* <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+        <div className="w-1/4">
+          <div className="flex flex-wrap mx-.5 mb-6">
+          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor=""
+              >
+                Transport
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id=""
+                type="text"
+                placeholder=""
+                value={transport}
+                onChange={ e => setTransport(e.target.value)}
+              />
+              {errors.transport && (
+                <span className="text-red-600">This field is required</span>
+              )}
+            </div>
+            <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="grand-total"
+              >
+                Discount
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="grand-total"
+                type="text"
+                placeholder="Grand Total"
+                value={totalDiscountTk}
+                onChange={(e) => setTotalDiscountTk(e.target.value)}
+              />
+            </div>
+            <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="grand-total"
+              >
+                Grand Total
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="grand-total"
+                type="text"
+                placeholder="Grand Total"
+                value={parseFloat(grandTotal) + parseFloat(transport) - parseFloat(totalDiscountTk)}
+                onChange={(e) => setGrandTotal(e.target.value)}
+              />
+            </div>
+            <div className="w-full md:w-1/3 px-3 mt-4 mb-6 md:mb-10">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="total-sale"
+              >
+                Paid
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="total-sale"
+                type="text"
+                placeholder="Paid"
+                value={paid}
+                onChange={(e) => setPaid(e.target.value)}
+              />
+            </div>
+            {/* <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
           <label
             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             htmlFor="grid-state"
@@ -534,42 +571,210 @@ const SaleForm = () => {
             </div>
           </div>
         </div> */}
-        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-          <label
-            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            htmlFor="due"
-          >
-            Due
-          </label>
-          <input
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="due"
-            type="text"
-            placeholder="Due"
-            value={grandTotal - paid}
-          />
+            <div className="w-full md:w-1/3 px-3 mt-4 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="due"
+              >
+                Due
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="due"
+                type="text"
+                placeholder="Due"
+                value={grandTotal + parseFloat(transport) - paid - parseFloat(totalDiscountTk)}
+              />
+            </div>
+            <div className="w-full md:w-1/3 px-3 mt-4 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="due"
+              >
+                Total Profit
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="due"
+                type="text"
+                placeholder="Due"
+                value={totalSaleProfit - totalDiscountTk}
+                onChange={(e) => setTotalSaleProfit(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
-        <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-          <label
-            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-            htmlFor="due"
-          >
-            Total Profit
-          </label>
-          <input
-            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="due"
-            type="text"
-            placeholder="Due"
-            value={totalSaleProfit}
-            onChange={(e) => setTotalSaleProfit(e.target.value)}
-          />
+      </div>
+      <div className="flex rounded-lg">
+        <div className="w-3/4 border-r-2 border-gray-400 pr-.5">
+          <div className="flex flex-wrap mx-.5 mb-2 mt-4">
+            <div className="w-full md:w-2/6 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="customer-name"
+              >
+                Customer's Name
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="customer-name"
+                type="text"
+                placeholder="Customer's Name"
+                {...register("customerName", { required: true })}
+              />
+              {errors.customerName && (
+                <span className="text-red-600">This field is required</span>
+              )}
+            </div>
+            <div className="w-full md:w-2/6 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="customer-email"
+              >
+                Customer's Email
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="customer-email"
+                type="text"
+                placeholder="Email"
+                {...register("email", { required: false })}
+              />
+              {errors.email && (
+                <span className="text-red-600">This field is required</span>
+              )}
+            </div>
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="customer-phone"
+              >
+                Customer's Phone
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="customer-phone"
+                type="text"
+                placeholder="Contact No"
+                {...register("phone", { required: true })}
+              />
+              {errors.phone && (
+                <span className="text-red-600">This field is required</span>
+              )}
+            </div>
+            <div className="w-full md:w-1/6 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor="customer-address"
+              >
+                Cutomer's Address
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="customer-address"
+                type="text"
+                placeholder="Address"
+                {...register("address", { required: true })}
+              />
+              {errors.address && (
+                <span className="text-red-600">This field is required</span>
+              )}
+            </div>
+          </div>
         </div>
+        <div className="w-1/4">
+          <div className="flex flex-wrap mx-.5 mb-2 mt-4">
+            
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor=""
+              >
+                Bank
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id=""
+                type="text"
+                placeholder=""
+                {...register("bank", { required: false })}
+              />
+              {errors.bank && (
+                <span className="text-red-600">This field is required</span>
+              )}
+            </div>
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                htmlFor=""
+              >
+                Branch
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id=""
+                type="text"
+                placeholder=""
+                {...register("branch", { required: fields })}
+              />
+              {errors.branch && (
+                <span className="text-red-600">This field is required</span>
+              )}
+            </div>
+          </div>
+          </div>
+      </div>
+      <div className="w-full bg-white p-2 border rounded-lg salesItems mt-3">
+        <table className="table text-gray-600">
+          <thead>
+            <tr>
+              <th>Serial</th>
+              <th>Product Name</th>
+              <th>Ex</th>
+              <th>Size</th>
+              <th>Quantity</th>
+              <th>Rate</th>
+              <th>Discount</th>
+              <th>Total</th>
+              <th>Profit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {fields.map((field, index) => {
+              return (
+                <tr
+                  key={field.id} // important to include key with field's id
+                >
+                  <td> {index + 1} </td>
+                  <td> {field.item} </td>
+                  <td> {field.category} </td>
+                  <td> {field.grade}</td>
+                  <td> {field.itemQuantity} </td>
+                  <td> {field.itemUnitPrice} </td>
+                  <td>
+                    {" "}
+                    ({field.itemDiscount} % {field.itemDiscountTk} Taka){" "}
+                  </td>
+                  <td> {field.total} </td>
+                  <td> {field.totalProfit} </td>
+                  <td className="text-red-700 hover:text-red-800">
+                    {" "}
+                    <FaTrash
+                      onClick={() => remove(index)}
+                      className="mt-1 ml-2 cursor-pointer"
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
       <input
         type="submit"
         className="bg-black hover:text-gray-100 font-bold italic hover:bg-gray-700 text-white p-3 rounded-lg w-full cursor-pointer mt-3"
-        value="Submit"
+        value="Sell"
       ></input>
     </form>
   );
