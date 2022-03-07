@@ -1,0 +1,4 @@
+.purchaseItems{
+    overflow-y: scroll;
+    height: 180px;
+}

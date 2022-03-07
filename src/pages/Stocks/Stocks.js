@@ -45,7 +45,8 @@ const Stocks = () => {
               className="bg-red-700 text-white p-2 rounded flex mb-3 uppercase"
               onClick={openModal}
             >
-              <FaPlus className="mt-1 mr-2" /> Add Stock Record
+              {/* // Stock  */}
+              <FaPlus className="mt-1 mr-2" /> Purchase  
             </button>
             <div className="ml-2">
             <input type="text" name="" id="" className="shadow rounded border-1 border-black  h-10 p-2 font-medium text-center italic " placeholder="Search" value={stockName} onChange={e => setStockName(e.target.value)}/>

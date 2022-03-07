@@ -84,7 +84,7 @@ const Sales = () => {
               className="bg-red-700 hover:bg-red-800 text-white p-2 rounded  mb-3 uppercase mr-2 hidden sm:flex"
               onClick={openModal}
             >
-              <FaPlus className="mt-1 mr-2" /> Add Sale Record
+              <FaPlus className="mt-1 mr-2" /> Sell
             </button>
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded flex mb-3 uppercase"

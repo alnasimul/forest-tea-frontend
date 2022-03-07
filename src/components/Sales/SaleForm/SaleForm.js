@@ -34,11 +34,11 @@ const SaleForm = () => {
   const [discount, setDiscount] = useState(0);
   const [discountTk, setDiscountTk] = useState(0);
   const [expense, setExpense] = useState(0);
-  const [totalDiscountTk, setTotalDiscountTk] = useState(0)
+  const [totalDiscountTk, setTotalDiscountTk] = useState(0);
   const [grandTotal, setGrandTotal] = useState(0);
   const [totalSaleProfit, setTotalSaleProfit] = useState(0);
   const [paid, setPaid] = useState(0);
-  const [transport, setTransport] = useState(0)
+  const [transport, setTransport] = useState(0);
 
   //setDiscount(discount > 0 ? (quantity * unitPrice) - ((quantity * unitPrice) * (discount/100)) : quantity*unitPrice)
 
@@ -75,15 +75,13 @@ const SaleForm = () => {
 
   const calculateGrandTotal = () => {
     let total = 0;
-    fields.map((field) => (total = total + field.total))
-    console.log(total);
+    fields.map((field) => (total = total + field.total));
     setGrandTotal(total);
   };
 
   const calculateTotalSaleProfit = () => {
     let total = 0;
     fields.map((field) => (total = total + field.totalProfit));
-    console.log(total);
     setTotalSaleProfit(total);
   };
 
@@ -118,11 +116,15 @@ const SaleForm = () => {
     ];
     data.due = grandTotal - paid;
     data.paid = parseFloat(paid);
-    data.grandTotal = grandTotal + parseFloat(transport) -  parseFloat(totalDiscountTk);
+    data.grandTotal =
+      grandTotal + parseFloat(transport) - parseFloat(totalDiscountTk);
     data.totalDiscountTk = parseFloat(totalDiscountTk);
-    data.totalSaleProfit = parseFloat(totalSaleProfit) - parseFloat(totalDiscountTk);
+    data.totalSaleProfit =
+      parseFloat(totalSaleProfit) - parseFloat(totalDiscountTk);
     data.paymentStatus = false;
     data.deliveredStatus = false;
+    data.transport = parseFloat(transport);
+    data.totalDiscountTk = parseFloat(totalDiscountTk);
     data.purchaseDate = new Date().toDateString();
     data.month = months[new Date().getMonth()];
     data.year = new Date().getFullYear();
@@ -141,8 +143,6 @@ const SaleForm = () => {
         .then((res) => console.log(res.data));
     } catch (error) {}
   };
-
-  console.log(selectedItem);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
@@ -477,7 +477,7 @@ const SaleForm = () => {
         </div>
         <div className="w-1/4">
           <div className="flex flex-wrap mx-.5 mb-6">
-          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+            <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                 htmlFor=""
@@ -490,7 +490,7 @@ const SaleForm = () => {
                 type="text"
                 placeholder=""
                 value={transport}
-                onChange={ e => setTransport(e.target.value)}
+                onChange={(e) => setTransport(e.target.value)}
               />
               {errors.transport && (
                 <span className="text-red-600">This field is required</span>
@@ -524,7 +524,11 @@ const SaleForm = () => {
                 id="grand-total"
                 type="text"
                 placeholder="Grand Total"
-                value={parseFloat(grandTotal) + parseFloat(transport) - parseFloat(totalDiscountTk)}
+                value={
+                  parseFloat(grandTotal) +
+                  parseFloat(transport) -
+                  parseFloat(totalDiscountTk)
+                }
                 onChange={(e) => setGrandTotal(e.target.value)}
               />
             </div>
@@ -583,7 +587,12 @@ const SaleForm = () => {
                 id="due"
                 type="text"
                 placeholder="Due"
-                value={grandTotal + parseFloat(transport) - paid - parseFloat(totalDiscountTk)}
+                value={
+                  grandTotal +
+                  parseFloat(transport) -
+                  paid -
+                  parseFloat(totalDiscountTk)
+                }
               />
             </div>
             <div className="w-full md:w-1/3 px-3 mt-4 mb-6 md:mb-0">
@@ -684,7 +693,6 @@ const SaleForm = () => {
         </div>
         <div className="w-1/4">
           <div className="flex flex-wrap mx-.5 mb-2 mt-4">
-            
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label
                 className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -715,62 +723,68 @@ const SaleForm = () => {
                 id=""
                 type="text"
                 placeholder=""
-                {...register("branch", { required: fields })}
+                {...register("branch", { required: false })}
               />
               {errors.branch && (
                 <span className="text-red-600">This field is required</span>
               )}
             </div>
           </div>
-          </div>
+        </div>
       </div>
-      <div className="w-full bg-white p-2 border rounded-lg salesItems mt-3">
-        <table className="table text-gray-600">
-          <thead>
-            <tr>
-              <th>Serial</th>
-              <th>Product Name</th>
-              <th>Ex</th>
-              <th>Size</th>
-              <th>Quantity</th>
-              <th>Rate</th>
-              <th>Discount</th>
-              <th>Total</th>
-              <th>Profit</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {fields.map((field, index) => {
-              return (
-                <tr
-                  key={field.id} // important to include key with field's id
-                >
-                  <td> {index + 1} </td>
-                  <td> {field.item} </td>
-                  <td> {field.category} </td>
-                  <td> {field.grade}</td>
-                  <td> {field.itemQuantity} </td>
-                  <td> {field.itemUnitPrice} </td>
-                  <td>
-                    {" "}
-                    ({field.itemDiscount} % {field.itemDiscountTk} Taka){" "}
-                  </td>
-                  <td> {field.total} </td>
-                  <td> {field.totalProfit} </td>
-                  <td className="text-red-700 hover:text-red-800">
-                    {" "}
-                    <FaTrash
-                      onClick={() => remove(index)}
-                      className="mt-1 ml-2 cursor-pointer"
-                    />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="flex rounded-lg">
+        <div className="w-3/4 bg-white p-2 border rounded-lg salesItems mt-3 ">
+          <table className="table text-gray-600">
+            <thead>
+              <tr>
+                <th>Serial</th>
+                <th>Product Name</th>
+                <th>Ex</th>
+                <th>Size</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Discount</th>
+                <th>Total</th>
+                <th>Profit</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fields.map((field, index) => {
+                return (
+                  <tr
+                    key={field.id} // important to include key with field's id
+                  >
+                    <td> {index + 1} </td>
+                    <td> {field.item} </td>
+                    <td> {field.category} </td>
+                    <td> {field.grade}</td>
+                    <td> {field.itemQuantity} </td>
+                    <td> {field.itemUnitPrice} </td>
+                    <td>
+                      {" "}
+                      ({field.itemDiscount} % {field.itemDiscountTk} Taka){" "}
+                    </td>
+                    <td> {field.total} </td>
+                    <td> {field.totalProfit} </td>
+                    <td className="text-red-700 hover:text-red-800">
+                      {" "}
+                      <FaTrash
+                        onClick={() => remove(index)}
+                        className="mt-1 ml-2 cursor-pointer"
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className="w-1/4">
+          <textarea className="m-3 p-3 w-full block tracking-wide text-gray-700 text-xs font-bold mb-2 border-1 border-black rounded" cols="30" rows="11" placeholder="Notes" {...register("notes", { required: false })} ></textarea>
+        </div>
       </div>
+
       <input
         type="submit"
         className="bg-black hover:text-gray-100 font-bold italic hover:bg-gray-700 text-white p-3 rounded-lg w-full cursor-pointer mt-3"
